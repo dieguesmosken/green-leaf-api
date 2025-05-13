@@ -13,10 +13,11 @@ import { useAuth } from "@/lib/auth-context"
 import { Loader2 } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { InfoIcon } from "lucide-react"
+import Link from "next/link"
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  email: z.string().email({ message: "Por favor, insira um endereço de e-mail válido" }),
+  password: z.string().min(6, { message: "A senha deve ter pelo menos 6 caracteres" }),
 })
 
 export function LoginForm() {
@@ -24,6 +25,7 @@ export function LoginForm() {
   const { toast } = useToast()
   const { login } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,49 +37,24 @@ export function LoginForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true)
+    setError(null)
+
     try {
-      // Credenciais mock para demo
-      const mockUsers = [
-        { email: "admin@example.com", password: "password123", name: "Admin", role: "admin" },
-        { email: "researcher@example.com", password: "password123", name: "Researcher", role: "researcher" },
-        { email: "farmer@example.com", password: "password123", name: "Farmer", role: "farmer" },
-      ]
-
-      const mockUser = mockUsers.find(
-        (u) => u.email === values.email && u.password === values.password
-      )
-
-      if (mockUser) {
-        // Simula autenticação local (exemplo: salva no localStorage)
-        localStorage.setItem(
-          "user",
-          JSON.stringify({ name: mockUser.name, email: mockUser.email, role: mockUser.role })
-        )
-        toast({
-          title: "Login bem-sucedido",
-          description: "Você entrou com sucesso usando credenciais demo.",
-        })
-        setTimeout(() => {
-          router.push("/dashboard")
-        }, 300)
-        setIsLoading(false)
-        return
-      }
-
-      // Login real (backend)
       await login(values.email, values.password)
+
       toast({
-        title: "Login successful",
-        description: "You have been logged in successfully.",
+        title: "Login bem-sucedido",
+        description: "Você foi autenticado com sucesso.",
       })
-      setTimeout(() => {
-        router.push("/dashboard")
-      }, 300)
-    } catch (error) {
+
+      router.push("/dashboard")
+    } catch (error: any) {
       console.error("Login error:", error)
+      setError(error.message || "Falha no login. Verifique suas credenciais e tente novamente.")
+
       toast({
-        title: "Login failed",
-        description: "Please check your credentials and try again.",
+        title: "Falha no login",
+        description: error.message || "Verifique suas credenciais e tente novamente.",
         variant: "destructive",
       })
     } finally {
@@ -89,16 +66,18 @@ export function LoginForm() {
     <>
       <Alert className="mb-4">
         <InfoIcon className="h-4 w-4" />
-        <AlertTitle>Demo Credentials</AlertTitle>
+        <AlertTitle>Informação</AlertTitle>
         <AlertDescription>
-          <p className="mt-1">You can use these demo accounts:</p>
-          <ul className="mt-2 list-disc pl-5 text-sm">
-            <li>Admin: admin@example.com / password123</li>
-            <li>Researcher: researcher@example.com / password123</li>
-            <li>Farmer: farmer@example.com / password123</li>
-          </ul>
+          <p className="mt-1">Faça login com suas credenciais ou registre uma nova conta.</p>
         </AlertDescription>
       </Alert>
+
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertTitle>Erro</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -109,7 +88,7 @@ export function LoginForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your email" {...field} />
+                  <Input placeholder="Seu email" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -120,10 +99,15 @@ export function LoginForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Senha</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="Enter your password" {...field} />
+                  <Input type="password" placeholder="Sua senha" {...field} />
                 </FormControl>
+                <div className="flex justify-end">
+                  <Link href="/forgot-password" className="text-xs text-primary hover:underline">
+                    Esqueceu sua senha?
+                  </Link>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -132,10 +116,10 @@ export function LoginForm() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Logging in...
+                Entrando...
               </>
             ) : (
-              "Login"
+              "Entrar"
             )}
           </Button>
         </form>

@@ -51,15 +51,15 @@ export default function Home() {
                   </Link>
                 </div>
               </div>
-              <div className="flex items-center justify-center">
-              <img
-                src="https://publicacoes.epagri.sc.gov.br/public/journals/1/submission_1868_1782_coverImage_pt_BR.jpg"
-                alt="Folha de mandioca com infecção bacteriana"
-                width={600}
-                height={400}
-                className="aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
-              />
-            </div>
+              <div className="mx-auto lg:ml-auto">
+                <img
+                  alt="Análise de folha de mandioca"
+                  className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
+                  height="550"
+                  src="/placeholder.svg?height=550&width=800"
+                  width="800"
+                />
+              </div>
             </div>
           </div>
         </section>
