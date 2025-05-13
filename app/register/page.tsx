@@ -1,6 +1,7 @@
 import { RegisterForm } from "@/components/auth/register-form"
 import { Leaf } from "lucide-react"
 import Link from "next/link"
+import { Footer } from "@/components/footer"
 
 export default function RegisterPage() {
   return (
@@ -12,20 +13,21 @@ export default function RegisterPage() {
         </Link>
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold tracking-tight">Create an account</h1>
-            <p className="mt-2 text-sm text-muted-foreground">Sign up to get started with Green Leaf</p>
+            <h1 className="text-2xl font-bold tracking-tight">Criar uma conta</h1>
+            <p className="mt-2 text-sm text-muted-foreground">Cadastre-se para começar a usar o Green Leaf</p>
           </div>
           <RegisterForm />
           <div className="text-center text-sm">
             <p>
-              Already have an account?{" "}
+              Já tem uma conta?{" "}
               <Link href="/login" className="font-medium text-primary hover:underline">
-                Login
+                Entrar
               </Link>
             </p>
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

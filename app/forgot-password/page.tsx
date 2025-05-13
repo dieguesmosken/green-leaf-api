@@ -1,9 +1,10 @@
-import { LoginForm } from "@/components/auth/login-form"
+import { ForgotPasswordForm } from "@/components/auth/forgot-password-form"
 import { Leaf } from "lucide-react"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
 
-export default function LoginPage() {
+// Atualize os textos
+export default function ForgotPasswordPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12">
@@ -13,15 +14,17 @@ export default function LoginPage() {
         </Link>
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold tracking-tight">Bem-vindo de volta</h1>
-            <p className="mt-2 text-sm text-muted-foreground">Entre na sua conta para continuar</p>
+            <h1 className="text-2xl font-bold tracking-tight">Esqueceu sua senha?</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Insira seu email e enviaremos um link para redefinir sua senha
+            </p>
           </div>
-          <LoginForm />
+          <ForgotPasswordForm />
           <div className="text-center text-sm">
             <p>
-              Não tem uma conta?{" "}
-              <Link href="/register" className="font-medium text-primary hover:underline">
-                Cadastre-se
+              Lembrou sua senha?{" "}
+              <Link href="/login" className="font-medium text-primary hover:underline">
+                Voltar para o login
               </Link>
             </p>
           </div>

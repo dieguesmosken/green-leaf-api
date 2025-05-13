@@ -36,14 +36,40 @@ export function LoginForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true)
     try {
-      await login(values.email, values.password)
+      // Credenciais mock para demo
+      const mockUsers = [
+        { email: "admin@example.com", password: "password123", name: "Admin", role: "admin" },
+        { email: "researcher@example.com", password: "password123", name: "Researcher", role: "researcher" },
+        { email: "farmer@example.com", password: "password123", name: "Farmer", role: "farmer" },
+      ]
 
+      const mockUser = mockUsers.find(
+        (u) => u.email === values.email && u.password === values.password
+      )
+
+      if (mockUser) {
+        // Simula autenticação local (exemplo: salva no localStorage)
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ name: mockUser.name, email: mockUser.email, role: mockUser.role })
+        )
+        toast({
+          title: "Login bem-sucedido",
+          description: "Você entrou com sucesso usando credenciais demo.",
+        })
+        setTimeout(() => {
+          router.push("/dashboard")
+        }, 300)
+        setIsLoading(false)
+        return
+      }
+
+      // Login real (backend)
+      await login(values.email, values.password)
       toast({
         title: "Login successful",
         description: "You have been logged in successfully.",
       })
-
-      // Add a small delay before navigation to ensure auth state is updated
       setTimeout(() => {
         router.push("/dashboard")
       }, 300)

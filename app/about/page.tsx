@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Leaf } from "lucide-react"
 import Link from "next/link"
+import { Footer } from "@/components/footer"
 
 export default function AboutPage() {
   return (
@@ -13,13 +14,16 @@ export default function AboutPage() {
           </div>
           <div className="flex items-center gap-4">
             <Link href="/">
-              <Button variant="ghost">Home</Button>
+              <Button variant="ghost">Início</Button>
+            </Link>
+            <Link href="/equipe">
+              <Button variant="ghost">Equipe</Button>
             </Link>
             <Link href="/login">
-              <Button variant="ghost">Login</Button>
+              <Button variant="ghost">Entrar</Button>
             </Link>
             <Link href="/register">
-              <Button>Register</Button>
+              <Button>Cadastrar</Button>
             </Link>
           </div>
         </div>
@@ -28,71 +32,60 @@ export default function AboutPage() {
         <div className="container py-12 md:py-24">
           <div className="mx-auto max-w-3xl space-y-8">
             <div className="space-y-2 text-center">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">About Green Leaf</h1>
+              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Sobre o Green Leaf</h1>
               <p className="text-gray-500 md:text-xl dark:text-gray-400">
-                Empowering farmers and researchers to combat bacterial infections in cassava plants
+                Capacitando agricultores e pesquisadores no combate a infecções bacterianas em plantas de mandioca
               </p>
             </div>
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold">Our Mission</h2>
+              <h2 className="text-2xl font-bold">Nossa Missão</h2>
               <p className="text-gray-500 dark:text-gray-400">
-                Green Leaf is dedicated to improving food security by providing advanced tools for the early detection
-                and management of Xanthomonas phaseoli infections in cassava crops. Our AI-powered platform helps
-                farmers and researchers identify, track, and respond to bacterial infections, reducing crop losses and
-                improving yields.
+                O Green Leaf é dedicado a melhorar a segurança alimentar fornecendo ferramentas avançadas para a
+                detecção precoce e gerenciamento de infecções por Xanthomonas phaseoli em cultivos de mandioca. Nossa
+                plataforma com tecnologia de IA ajuda agricultores e pesquisadores a identificar, rastrear e responder a
+                infecções bacterianas, reduzindo perdas de colheitas e melhorando a produtividade.
               </p>
 
-              <h2 className="text-2xl font-bold">The Problem</h2>
+              <h2 className="text-2xl font-bold">O Problema</h2>
               <p className="text-gray-500 dark:text-gray-400">
-                Cassava is a staple food for over 800 million people worldwide, particularly in developing regions.
-                Bacterial infections caused by Xanthomonas phaseoli can devastate cassava crops, leading to significant
-                food shortages and economic losses. Early detection and management of these infections are crucial but
-                often challenging due to limited resources and expertise.
+                A mandioca é um alimento básico para mais de 800 milhões de pessoas em todo o mundo, particularmente em
+                regiões em desenvolvimento. Infecções bacterianas causadas por Xanthomonas phaseoli podem devastar
+                cultivos de mandioca, levando a significativas escassezes de alimentos e perdas econômicas. A detecção
+                precoce e o gerenciamento dessas infecções são cruciais, mas frequentemente desafiadores devido a
+                recursos e expertise limitados.
               </p>
 
-              <h2 className="text-2xl font-bold">Our Solution</h2>
+              <h2 className="text-2xl font-bold">Nossa Solução</h2>
               <p className="text-gray-500 dark:text-gray-400">
-                Green Leaf combines deep learning technology with geospatial mapping to provide a comprehensive solution
-                for bacterial infection management. Our platform allows users to:
+                O Green Leaf combina tecnologia de aprendizado profundo com mapeamento geoespacial para fornecer uma
+                solução abrangente para o gerenciamento de infecções bacterianas. Nossa plataforma permite aos usuários:
               </p>
               <ul className="list-disc pl-6 text-gray-500 dark:text-gray-400 space-y-2">
-                <li>Upload and analyze images of cassava leaves for infection detection</li>
-                <li>Visualize infection distribution through interactive heatmaps</li>
-                <li>Track infection patterns over time and across regions</li>
-                <li>Receive early warnings and recommendations for infection management</li>
-                <li>Collaborate with researchers and other farmers to share knowledge and resources</li>
+                <li>Carregar e analisar imagens de folhas de mandioca para detecção de infecções</li>
+                <li>Visualizar a distribuição de infecções através de mapas de calor interativos</li>
+                <li>Rastrear padrões de infecção ao longo do tempo e em diferentes regiões</li>
+                <li>Receber alertas precoces e recomendações para o gerenciamento de infecções</li>
+                <li>Colaborar com pesquisadores e outros agricultores para compartilhar conhecimento e recursos</li>
               </ul>
 
-              <h2 className="text-2xl font-bold">Our Team</h2>
+              <h2 className="text-2xl font-bold">Nossa Equipe</h2>
               <p className="text-gray-500 dark:text-gray-400">
-                Green Leaf was founded by a team of agricultural scientists, AI specialists, and software engineers
-                committed to applying technology to solve critical food security challenges. Our diverse team brings
-                together expertise in plant pathology, machine learning, and user-centered design to create a platform
-                that is both powerful and accessible.
+                O Green Leaf foi fundado por uma equipe de cientistas agrícolas, especialistas em IA e engenheiros de
+                software comprometidos em aplicar tecnologia para resolver desafios críticos de segurança alimentar.
+                Nossa equipe diversificada reúne expertise em patologia vegetal, aprendizado de máquina e design
+                centrado no usuário para criar uma plataforma que é ao mesmo tempo poderosa e acessível.
               </p>
+
+              <div className="flex justify-center pt-4">
+                <Link href="/equipe">
+                  <Button size="lg">Conheça Nossa Equipe</Button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </main>
-      <footer className="border-t bg-muted/40">
-        <div className="container flex flex-col gap-2 py-6 md:flex-row md:items-center md:justify-between md:py-8">
-          <div className="flex items-center gap-2">
-            <Leaf className="h-5 w-5 text-primary" />
-            <p className="text-sm text-muted-foreground">© 2023 Green Leaf. All rights reserved.</p>
-          </div>
-          <div className="flex gap-4 text-sm text-muted-foreground">
-            <Link href="/terms" className="hover:underline">
-              Terms
-            </Link>
-            <Link href="/privacy" className="hover:underline">
-              Privacy
-            </Link>
-            <Link href="/contact" className="hover:underline">
-              Contact
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

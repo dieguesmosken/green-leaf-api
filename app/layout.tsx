@@ -7,8 +7,8 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "Green Leaf - Cassava Leaf Bacterial Infection Detection",
-  description: "AI-powered detection and mapping of Xanthomonas phaseoli infection in cassava leaves",
+  title: "Green Leaf - Detecção de Infecção Bacteriana em Folhas de Mandioca",
+  description: "Detecção e mapeamento com IA de infecções por Xanthomonas phaseoli em folhas de mandioca",
     generator: 'v0.dev'
 }
 

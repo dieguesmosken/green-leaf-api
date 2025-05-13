@@ -4,18 +4,19 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { BarChart3, FileUp, Home, MapPin, Settings, Users } from "lucide-react"
+import { BarChart3, FileUp, Home, MapPin, Settings, Users, Mail } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 
+// Atualize os itens de navegação
 const navItems = [
   {
-    title: "Dashboard",
+    title: "Painel",
     href: "/dashboard",
     icon: Home,
     roles: ["admin", "researcher", "farmer"],
   },
   {
-    title: "Heatmap",
+    title: "Mapa de Calor",
     href: "/dashboard/heatmap",
     icon: MapPin,
     roles: ["admin", "researcher", "farmer"],
@@ -27,21 +28,33 @@ const navItems = [
     roles: ["admin", "researcher", "farmer"],
   },
   {
-    title: "Analysis",
+    title: "Análises",
     href: "/dashboard/analysis",
     icon: BarChart3,
     roles: ["admin", "researcher", "farmer"],
   },
   {
-    title: "Users",
+    title: "Usuários",
     href: "/dashboard/users",
     icon: Users,
     roles: ["admin"],
   },
   {
-    title: "Settings",
+    title: "Teste de Email",
+    href: "/admin/email-test",
+    icon: Mail,
+    roles: ["admin"],
+  },
+  {
+    title: "Configurações",
     href: "/dashboard/settings",
     icon: Settings,
+    roles: ["admin", "researcher", "farmer"],
+  },
+  {
+    href: "/equipe",
+    title: "Equipe",
+    icon: Users,
     roles: ["admin", "researcher", "farmer"],
   },
 ]

@@ -4,6 +4,7 @@ import { UserNav } from "@/components/dashboard/user-nav"
 import { MobileNav } from "@/components/dashboard/mobile-nav"
 import { Leaf } from "lucide-react"
 import Link from "next/link"
+import { Footer } from "@/components/footer"
 
 export default function DashboardLayout({
   children,
@@ -32,6 +33,7 @@ export default function DashboardLayout({
         </aside>
         <main className="flex-1 overflow-auto">{children}</main>
       </div>
+      <Footer />
     </div>
   )
 }

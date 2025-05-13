@@ -17,14 +17,14 @@ import { InfoIcon } from "lucide-react"
 
 const formSchema = z
   .object({
-    name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-    email: z.string().email({ message: "Por favor entre com um email Valido!" }),
-    password: z.string().min(6, { message: "A senha deve ter pelo menos 6 Caracteres" }),
+    name: z.string().min(2, { message: "O nome deve ter pelo menos 2 caracteres" }),
+    email: z.string().email({ message: "Por favor, insira um endereço de e-mail válido" }),
+    password: z.string().min(6, { message: "A senha deve ter pelo menos 6 caracteres" }),
     confirmPassword: z.string(),
     role: z.enum(["farmer", "researcher", "admin"]),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
+    message: "As senhas não coincidem",
     path: ["confirmPassword"],
   })
 
@@ -33,6 +33,7 @@ export function RegisterForm() {
   const { toast } = useToast()
   const { register } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,18 +48,24 @@ export function RegisterForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true)
+    setError(null)
+
     try {
       await register(values.name, values.email, values.password, values.role)
+
       toast({
-        title: "Registration successful",
-        description: "Your account has been created successfully.",
+        title: "Registro bem-sucedido",
+        description: "Sua conta foi criada com sucesso.",
       })
+
       router.push("/dashboard")
-    } catch (error) {
+    } catch (error: any) {
       console.error("Registration error:", error)
+      setError(error.message || "Falha no registro. Por favor, tente novamente.")
+
       toast({
-        title: "Registration failed",
-        description: "There was an error creating your account. Please try again.",
+        title: "Falha no registro",
+        description: error.message || "Houve um erro ao criar sua conta. Por favor, tente novamente.",
         variant: "destructive",
       })
     } finally {
@@ -70,11 +77,16 @@ export function RegisterForm() {
     <>
       <Alert className="mb-4">
         <InfoIcon className="h-4 w-4" />
-        <AlertTitle>Demo Mode</AlertTitle>
-        <AlertDescription>
-          This is a demo application. You can register with any email and password. The backend API is simulated.
-        </AlertDescription>
+        <AlertTitle>Informação</AlertTitle>
+        <AlertDescription>Preencha o formulário abaixo para criar uma nova conta.</AlertDescription>
       </Alert>
+
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertTitle>Erro</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -83,9 +95,9 @@ export function RegisterForm() {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>Nome</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your name" {...field} />
+                  <Input placeholder="Seu nome" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -98,7 +110,7 @@ export function RegisterForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your email" {...field} />
+                  <Input placeholder="Seu email" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -109,9 +121,9 @@ export function RegisterForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Senha</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="Create a password" {...field} />
+                  <Input type="password" placeholder="Crie uma senha" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -122,9 +134,9 @@ export function RegisterForm() {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
+                <FormLabel>Confirmar Senha</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="Confirm your password" {...field} />
+                  <Input type="password" placeholder="Confirme sua senha" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -135,17 +147,17 @@ export function RegisterForm() {
             name="role"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Role</FormLabel>
+                <FormLabel>Função</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select your role" />
+                      <SelectValue placeholder="Selecione sua função" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="farmer">Farmer</SelectItem>
-                    <SelectItem value="researcher">Researcher</SelectItem>
-                    <SelectItem value="admin">Administrator</SelectItem>
+                    <SelectItem value="farmer">Agricultor</SelectItem>
+                    <SelectItem value="researcher">Pesquisador</SelectItem>
+                    <SelectItem value="admin">Administrador</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -156,10 +168,10 @@ export function RegisterForm() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating account...
+                Criando conta...
               </>
             ) : (
-              "Register"
+              "Registrar"
             )}
           </Button>
         </form>
