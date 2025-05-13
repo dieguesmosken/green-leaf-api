@@ -13,13 +13,13 @@ export default function TermsPage() {
           </div>
           <div className="flex items-center gap-4">
             <Link href="/">
-              <Button variant="ghost">Home</Button>
+              <Button variant="ghost">Inicio</Button>
             </Link>
             <Link href="/login">
               <Button variant="ghost">Login</Button>
             </Link>
             <Link href="/register">
-              <Button>Register</Button>
+              <Button>Cadastrar</Button>
             </Link>
           </div>
         </div>
@@ -28,28 +28,23 @@ export default function TermsPage() {
         <div className="container py-12 md:py-24">
           <div className="mx-auto max-w-3xl space-y-8">
             <div className="space-y-2 text-center">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Terms of Service</h1>
-              <p className="text-gray-500 md:text-xl dark:text-gray-400">Last updated: May 8, 2023</p>
+              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Termos de Serviço</h1>
+              <p className="text-gray-500 md:text-xl dark:text-gray-400">Ultima Atualização: 13 de Maio de 2025</p>
             </div>
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold">1. Introduction</h2>
+              <h2 className="text-2xl font-bold">1. Introdução</h2>
               <p className="text-gray-500 dark:text-gray-400">
-                Welcome to Green Leaf. These Terms of Service govern your use of our website and services. By accessing
-                or using Green Leaf, you agree to be bound by these Terms.
+              Bem-vindo ao Green Leaf. Estes Termos de Serviço regem o uso do nosso site e serviços. Ao acessar ou usar o Green Leaf, você concorda em estar vinculado a estes Termos.
               </p>
 
-              <h2 className="text-2xl font-bold">2. Definitions</h2>
+              <h2 className="text-2xl font-bold">2. Definiçoes</h2>
               <p className="text-gray-500 dark:text-gray-400">
-                "Service" refers to the Green Leaf platform, including all features, functionalities, and user
-                interfaces. "User" refers to any individual who accesses or uses the Service. "Content" refers to all
-                information, data, text, images, and other materials uploaded, downloaded, or appearing on the Service.
+              "Serviço" refere-se à plataforma Green Leaf, incluindo todas as funcionalidades, características e interfaces de usuário. "Usuário" refere-se a qualquer indivíduo que acessa ou utiliza o Serviço. "Conteúdo" refere-se a todas as informações, dados, textos, imagens e outros materiais carregados, baixados ou que aparecem no Serviço.
               </p>
 
-              <h2 className="text-2xl font-bold">3. Account Registration</h2>
+              <h2 className="text-2xl font-bold">3. Registro de Conta</h2>
               <p className="text-gray-500 dark:text-gray-400">
-                To use certain features of the Service, you may be required to register for an account. You agree to
-                provide accurate, current, and complete information during the registration process and to update such
-                information to keep it accurate, current, and complete.
+              Para usar certos recursos do Serviço, pode ser necessário registrar-se para uma conta. Você concorda em fornecer informações precisas, atuais e completas durante o processo de registro e a atualizar essas informações para mantê-las precisas, atuais e completas.
               </p>
 
               <h2 className="text-2xl font-bold">4. User Responsibilities</h2>
