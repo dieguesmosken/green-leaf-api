@@ -51,7 +51,9 @@ export default function Home() {
                   </Link>
                 </div>
               </div>
-             \ <div className="flex items-center justify-center">
+              <div className="mx-auto lg:ml-auto">
+                
+                 {/* <div className="flex items-center justify-center"> */}
               <img
                 src="https://publicacoes.epagri.sc.gov.br/public/journals/1/submission_1868_1782_coverImage_pt_BR.jpg"
                 alt="Folha de mandioca com infecção bacteriana"
@@ -59,7 +61,8 @@ export default function Home() {
                 height={400}
                 className="aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
               />
-            </div>
+            
+              </div>
             </div>
           </div>
         </section>
