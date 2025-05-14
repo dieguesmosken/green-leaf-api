@@ -61,7 +61,7 @@ export default function EquipePage() {
                       <CardDescription className="text-lg">Analista de Dados</CardDescription>
                       <div className="flex gap-2 mt-2">
                         <a
-                          href="https://github.com/"
+                          href="https://github.com/TheLimaLeo"
                           target="_blank"
                           rel="noopener noreferrer"
                           aria-label="GitHub de Leonardo"
@@ -71,7 +71,7 @@ export default function EquipePage() {
                           </Button>
                         </a>
                         <a
-                          href="https://linkedin.com/"
+                          href="https://www.linkedin.com/in/leonardo-lima556/"
                           target="_blank"
                           rel="noopener noreferrer"
                           aria-label="LinkedIn de Leonardo"
@@ -267,7 +267,7 @@ export default function EquipePage() {
                       <CardDescription className="text-lg">Developer</CardDescription>
                       <div className="flex gap-2 mt-2">
                         <a
-                          href="https://github.com/"
+                          href="https://github.com/dieguesmosken"
                           target="_blank"
                           rel="noopener noreferrer"
                           aria-label="GitHub de Matheus"
@@ -287,7 +287,7 @@ export default function EquipePage() {
                           </Button>
                         </a>
                         <a
-                          href="https://twitter.com/"
+                          href="https://twitter.com/dieguesmosken"
                           target="_blank"
                           rel="noopener noreferrer"
                           aria-label="Twitter de Matheus"
@@ -369,7 +369,7 @@ export default function EquipePage() {
                       <CardDescription className="text-lg">Administradora de Redes</CardDescription>
                       <div className="flex gap-2 mt-2">
                         <a
-                          href="https://github.com/"
+                          href="https://github.com/Ana-129"
                           target="_blank"
                           rel="noopener noreferrer"
                           aria-label="GitHub de Ana"
@@ -379,7 +379,7 @@ export default function EquipePage() {
                           </Button>
                         </a>
                         <a
-                          href="https://linkedin.com/"
+                          href="https://www.linkedin.com/in/ana-flavia-guimar%C3%A3es-gon%C3%A7alves-718a3b307/"
                           target="_blank"
                           rel="noopener noreferrer"
                           aria-label="LinkedIn de Ana"
