@@ -14,13 +14,15 @@ import { toast } from "sonner"
 export default function EditProfilePage() {
   const { user, updateUser } = useAuth()
   const router = useRouter()
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
   })
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (user === undefined) return // ainda carregando o contexto
     if (!user) {
       router.replace("/login?redirect=/perfil/editar")
     } else {
@@ -28,12 +30,9 @@ export default function EditProfilePage() {
         name: user.name || "",
         email: user.email || "",
       })
+      setLoading(false)
     }
-  }, [user])
-
-  if (!user) {
-    return null
-  }
+  }, [user, router])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -54,6 +53,14 @@ export default function EditProfilePage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-lg font-medium">Carregando...</p>
+      </div>
+    )
   }
 
   return (
@@ -93,8 +100,7 @@ export default function EditProfilePage() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-end gap-2">
-                <Button type="button" variant="ghost" onClick={() => router.push("/perfil")}
-                  disabled={loading}>
+                <Button type="button" variant="ghost" onClick={() => router.push("/perfil")} disabled={loading}>
                   Cancelar
                 </Button>
                 <Button type="submit" disabled={loading}>
