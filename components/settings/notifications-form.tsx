@@ -49,8 +49,8 @@ export function NotificationsForm() {
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
-                  <FormLabel className="text-base">Email Notifications</FormLabel>
-                  <FormDescription>Receive notifications via email.</FormDescription>
+                  <FormLabel className="text-base">Notificações por e-mail</FormLabel>
+                  <FormDescription>Receba notificações por e-mail.</FormDescription>
                 </div>
                 <FormControl>
                   <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -64,8 +64,8 @@ export function NotificationsForm() {
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
-                  <FormLabel className="text-base">Push Notifications</FormLabel>
-                  <FormDescription>Receive notifications on your device.</FormDescription>
+                  <FormLabel className="text-base">Notificações push</FormLabel>
+                  <FormDescription>Receba notificações no seu dispositivo.</FormDescription>
                 </div>
                 <FormControl>
                   <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -75,15 +75,15 @@ export function NotificationsForm() {
           />
         </div>
         <div className="space-y-4">
-          <div className="font-medium">Notification Types</div>
+          <div className="font-medium">Tipos de notificação</div>
           <FormField
             control={form.control}
             name="newAnalysis"
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
-                  <FormLabel className="text-base">New Analysis Results</FormLabel>
-                  <FormDescription>Get notified when a new analysis is completed.</FormDescription>
+                  <FormLabel className="text-base">Novos resultados de análise</FormLabel>
+                  <FormDescription>Seja notificado quando uma nova análise for concluída.</FormDescription>
                 </div>
                 <FormControl>
                   <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -97,8 +97,8 @@ export function NotificationsForm() {
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
-                  <FormLabel className="text-base">High Infection Alerts</FormLabel>
-                  <FormDescription>Get notified when high infection rates are detected.</FormDescription>
+                  <FormLabel className="text-base">Alertas de alta infecção</FormLabel>
+                  <FormDescription>Seja notificado quando altas taxas de infecção forem detectadas.</FormDescription>
                 </div>
                 <FormControl>
                   <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -112,8 +112,8 @@ export function NotificationsForm() {
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
-                  <FormLabel className="text-base">Weekly Reports</FormLabel>
-                  <FormDescription>Receive weekly summary reports of infection data.</FormDescription>
+                  <FormLabel className="text-base">Relatórios semanais</FormLabel>
+                  <FormDescription>Receba relatórios semanais resumidos de dados de infecção.</FormDescription>
                 </div>
                 <FormControl>
                   <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -122,7 +122,7 @@ export function NotificationsForm() {
             )}
           />
         </div>
-        <Button type="submit">Save preferences</Button>
+        <Button type="submit">Salvar Configurações</Button>
       </form>
     </Form>
   )

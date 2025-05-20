@@ -12,10 +12,10 @@ import { useAuth } from "@/lib/auth-context"
 
 const profileFormSchema = z.object({
   name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
+    message: "O nome deve ter pelo menos 2 caracteres.",
   }),
   email: z.string().email({
-    message: "Please enter a valid email address.",
+    message: "Por favor, insira um endereço de e-mail válido.",
   }),
   bio: z.string().max(160).optional(),
   organization: z.string().optional(),
@@ -43,8 +43,8 @@ export function ProfileForm() {
 
   function onSubmit(data: ProfileFormValues) {
     toast({
-      title: "Profile updated",
-      description: "Your profile has been updated successfully.",
+      title: "Perfil atualizado",
+      description: "Seu perfil foi atualizado com sucesso.",
     })
   }
 
@@ -58,9 +58,9 @@ export function ProfileForm() {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Your name" {...field} />
+                <Input placeholder="Seu nome" {...field} />
               </FormControl>
-              <FormDescription>This is your public display name.</FormDescription>
+              <FormDescription>Este é seu nome de exibição público.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -74,7 +74,7 @@ export function ProfileForm() {
               <FormControl>
                 <Input placeholder="Your email" {...field} />
               </FormControl>
-              <FormDescription>This is the email address associated with your account.</FormDescription>
+              <FormDescription>Este é o endereço de e-mail associado à sua conta.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -88,7 +88,7 @@ export function ProfileForm() {
               <FormControl>
                 <Textarea placeholder="Tell us a little bit about yourself" className="resize-none" {...field} />
               </FormControl>
-              <FormDescription>Brief description for your profile. Max 160 characters.</FormDescription>
+              <FormDescription>Breve descrição do seu perfil. Máximo de 160 caracteres.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -98,11 +98,11 @@ export function ProfileForm() {
           name="organization"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Organization</FormLabel>
+              <FormLabel>Organização</FormLabel>
               <FormControl>
                 <Input placeholder="Your organization" {...field} />
               </FormControl>
-              <FormDescription>The organization or institution you are affiliated with.</FormDescription>
+              <FormDescription>A organização ou instituição à qual você é afiliado.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -112,16 +112,16 @@ export function ProfileForm() {
           name="location"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Location</FormLabel>
+              <FormLabel>Localização</FormLabel>
               <FormControl>
                 <Input placeholder="Your location" {...field} />
               </FormControl>
-              <FormDescription>Your geographical location or region.</FormDescription>
+              <FormDescription>Sua localização geográfica ou região.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Update profile</Button>
+        <Button type="submit">Atualizar perfil</Button>
       </form>
     </Form>
   )
