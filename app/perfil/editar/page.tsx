@@ -1,5 +1,6 @@
 "use client"
-
+export const dynamic = "force-dynamic"
+// esta página não pode ser estática, pois depende do estado de autenticação do usuário
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Header } from "@/components/header"
