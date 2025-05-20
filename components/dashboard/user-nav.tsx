@@ -30,7 +30,7 @@ export function UserNav() {
         <Button variant="ghost" className="relative h-8 w-8 rounded-full ">
         {/* bg-transparent p-0 hover:bg-transparent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background disabled:pointer-events-none data-[state=open]:bg-transparent data-[state=open]:text-accent"> */}
           <Avatar className="h-8 w-8">
-            <AvatarImage src={user?.image || "/default-avatar.png"} alt={user?.name || "User Avatar"} />
+            <AvatarImage src={"/default-avatar.png"} alt={user?.name || "User Avatar"} />
             {/* Voltar para a primeira letra do nome do usuário ou um caractere padrão */}
             <AvatarFallback>
               {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
@@ -47,7 +47,7 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push("/dashboard/profile")}>
+          <DropdownMenuItem onClick={() => router.push("/perfil")}>
             <User className="mr-2 h-4 w-4" />
             <span>Perfil</span>
           </DropdownMenuItem>
