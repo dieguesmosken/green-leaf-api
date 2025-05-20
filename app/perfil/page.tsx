@@ -63,16 +63,11 @@ export default function ProfilePage() {
                     Informações Pessoais
                   </Link>
                 </Button>
+              
                 <Button variant="ghost" className="justify-start" asChild>
-                  <Link href="/pedidos">
-                    <ShoppingBag className="mr-2 h-4 w-4" />
-                    Meus Pedidos
-                  </Link>
-                </Button>
-                <Button variant="ghost" className="justify-start" asChild>
-                  <Link href="/perfil/avaliacoes">
+                  <Link href="/perfil/analises">
                     <Star className="mr-2 h-4 w-4" />
-                    Minhas Avaliações
+                    Minhas Analises
                   </Link>
                 </Button>
                 <Button variant="ghost" className="justify-start" asChild>
@@ -132,28 +127,28 @@ export default function ProfilePage() {
               <Card className="shadow-md">
                 <CardHeader>
                   <CardTitle>Atividade Recente</CardTitle>
-                  <CardDescription>Seus pedidos e avaliações recentes.</CardDescription>
+                  <CardDescription>Seus upload e analises recentes.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div>
-                      <h3 className="font-medium mb-2">Últimos Pedidos</h3>
+                      <h3 className="font-medium mb-2">Últimos Uploads</h3>
                       <div className="text-center py-4 bg-muted/30 rounded-lg">
-                        <p className="text-muted-foreground text-sm">Você ainda não realizou nenhum pedido.</p>
+                        <p className="text-muted-foreground text-sm">Você ainda não realizou nenhum upload.</p>
                       </div>
                     </div>
 
                     <div>
-                      <h3 className="font-medium mb-2">Últimas Avaliações</h3>
+                      <h3 className="font-medium mb-2">Últimas Analises</h3>
                       <div className="text-center py-4 bg-muted/30 rounded-lg">
-                        <p className="text-muted-foreground text-sm">Você ainda não avaliou nenhum produto.</p>
+                        <p className="text-muted-foreground text-sm">Você ainda não realizou nenhum upload.</p>
                       </div>
                     </div>
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-between">
                   <Button variant="outline" asChild>
-                    <Link href="/pedidos">Ver Todos os Pedidos</Link>
+                    <Link href="/dashboard/uploads">Ver Todos os Uploads</Link>
                   </Button>
                   <Button variant="outline" asChild>
                     <Link href="/perfil/avaliacoes">Ver Todas as Avaliações</Link>
