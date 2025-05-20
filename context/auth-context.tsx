@@ -106,16 +106,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const userData = await response.json()
       setUser(userData)
-      toast({
+            toast({
         title: "Conta criada com sucesso!",
-        description: "Bem-vindo(a) à Runa Verde!",
+        description: "Bem-vindo(a) à plataforma!",
       })
       router.push("/")
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Erro ao criar conta",
-        description: error instanceof Error ? error.message : "Ocorreu um erro ao criar sua conta",
+        description: error instanceof Error ? error.message : "Ocorreu um erro ao criar conta",
       })
       throw error
     } finally {
@@ -123,46 +123,62 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const logout = async () => {
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-      })
-      setUser(null)
-      toast({
-        title: "Logout realizado com sucesso",
-        description: "Você foi desconectado da sua conta",
-      })
-      router.push("/")
-    } catch (error) {
-      console.error("Logout error:", error)
-    }
+  const logout = () => {
+    setUser(null)
+    fetch("/api/auth/logout", { method: "POST" })
+    router.push("/login")
+    toast({
+      title: "Logout realizado",
+      description: "Você saiu da sua conta com sucesso.",
+    })
   }
 
   const updateUser = async (data: { name: string; email: string }) => {
+    setIsLoading(true)
     try {
-      const response = await fetch("/api/users/update", {
+      const response = await fetch("/api/auth/update", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(data),
       })
+
       if (!response.ok) {
-        throw new Error("Erro ao atualizar usuário")
+        const error = await response.json()
+        throw new Error(error.message || "Falha ao atualizar dados do usuário")
       }
+
       const updatedUser = await response.json()
       setUser(updatedUser)
+
+      toast({
+        title: "Dados atualizados com sucesso!",
+        description: "Suas informações foram salvas.",
+      })
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao atualizar usuário",
+        description: error instanceof Error ? error.message : "Erro inesperado",
+      })
       throw error
+    } finally {
+      setIsLoading(false)
     }
   }
 
-  return <AuthContext.Provider value={{ user, login, register, logout, isLoading, updateUser }}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={{ user, login, register, logout, isLoading, updateUser }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
-export function useAuth() {
+export const useAuth = () => {
   const context = useContext(AuthContext)
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider")
+    throw new Error("useAuth precisa estar dentro de um AuthProvider")
   }
   return context
 }
