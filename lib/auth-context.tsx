@@ -17,6 +17,7 @@ type AuthContextType = {
   register: (name: string, email: string, password: string, role: string) => Promise<void>
   logout: () => Promise<void>
   isLoading: boolean
+  updateUser: (data: { name: string; email: string }) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -109,7 +110,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  return <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>{children}</AuthContext.Provider>
+  const updateUser = async (data: { name: string; email: string }) => {
+    if (!user) return
+    setIsLoading(true)
+    try {
+      const response = await fetch("/api/auth/me", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+      if (!response.ok) throw new Error("Erro ao atualizar usuário")
+      const updated = await response.json()
+      setUser(updated.user)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return <AuthContext.Provider value={{ user, login, register, logout, updateUser, isLoading }}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {

@@ -18,17 +18,18 @@ export default function EditProfilePage() {
     name: "",
     email: "",
   })
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (!user) {
-      router.push("/login?redirect=/perfil/editar")
+      router.replace("/login?redirect=/perfil/editar")
     } else {
       setFormData({
-        name: user.name,
-        email: user.email,
+        name: user.name || "",
+        email: user.email || "",
       })
     }
-  }, [user, router])
+  }, [user])
 
   if (!user) {
     return null
@@ -43,12 +44,15 @@ export default function EditProfilePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setLoading(true)
     try {
       await updateUser(formData)
       toast.success("Informações atualizadas com sucesso!")
       router.push("/perfil")
     } catch (err) {
       toast.error("Erro ao atualizar perfil.")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -89,10 +93,13 @@ export default function EditProfilePage() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-end gap-2">
-                <Button type="button" variant="ghost" onClick={() => router.push("/perfil")}>
+                <Button type="button" variant="ghost" onClick={() => router.push("/perfil")}
+                  disabled={loading}>
                   Cancelar
                 </Button>
-                <Button type="submit">Salvar</Button>
+                <Button type="submit" disabled={loading}>
+                  {loading ? "Salvando..." : "Salvar"}
+                </Button>
               </CardFooter>
             </form>
           </Card>
