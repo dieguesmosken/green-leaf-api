@@ -11,17 +11,17 @@ import { useToast } from "@/components/ui/use-toast"
 const accountFormSchema = z
   .object({
     currentPassword: z.string().min(6, {
-      message: "Password must be at least 6 characters.",
+      message: "A senha deve ter pelo menos 6 caracteres.",
     }),
     newPassword: z.string().min(6, {
-      message: "Password must be at least 6 characters.",
+      message: "A senha deve ter pelo menos 6 caracteres.",
     }),
     confirmPassword: z.string().min(6, {
-      message: "Password must be at least 6 characters.",
+      message: "A senha deve ter pelo menos 6 caracteres.",
     }),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords do not match",
+    message: "Senhas não coincidem",
     path: ["confirmPassword"],
   })
 
@@ -41,8 +41,8 @@ export function AccountForm() {
 
   function onSubmit(data: AccountFormValues) {
     toast({
-      title: "Password updated",
-      description: "Your password has been updated successfully.",
+      title: "Senha atualizada",
+      description: "Sua senha foi atualizada com sucesso.",
     })
     form.reset()
   }
@@ -57,7 +57,7 @@ export function AccountForm() {
             <FormItem>
               <FormLabel>Current Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Enter your current password" {...field} />
+                <Input type="password" placeholder="Insira sua senha atual" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -70,9 +70,9 @@ export function AccountForm() {
             <FormItem>
               <FormLabel>New Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Enter your new password" {...field} />
+                <Input type="password" placeholder="Insira sua nova senha" {...field} />
               </FormControl>
-              <FormDescription>Password must be at least 6 characters long.</FormDescription>
+              <FormDescription>A senha deve ter pelo menos 6 caracteres.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -82,7 +82,7 @@ export function AccountForm() {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
+              <FormLabel>Confirme sua senha</FormLabel>
               <FormControl>
                 <Input type="password" placeholder="Confirm your new password" {...field} />
               </FormControl>
@@ -90,7 +90,7 @@ export function AccountForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Update password</Button>
+        <Button type="submit">Atualizar senha</Button>
       </form>
     </Form>
   )

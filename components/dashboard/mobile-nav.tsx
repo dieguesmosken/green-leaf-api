@@ -11,13 +11,13 @@ import { useAuth } from "@/lib/auth-context"
 
 const navItems = [
   {
-    title: "Dashboard",
+    title: "Painel",
     href: "/dashboard",
     icon: Home,
     roles: ["admin", "researcher", "farmer"],
   },
   {
-    title: "Heatmap",
+    title: "Mapa de Calor",
     href: "/dashboard/heatmap",
     icon: MapPin,
     roles: ["admin", "researcher", "farmer"],
@@ -29,19 +29,19 @@ const navItems = [
     roles: ["admin", "researcher", "farmer"],
   },
   {
-    title: "Analysis",
+    title: "Análises",
     href: "/dashboard/analysis",
     icon: BarChart3,
     roles: ["admin", "researcher", "farmer"],
   },
   {
-    title: "Users",
+    title: "Usuários",
     href: "/dashboard/users",
     icon: Users,
     roles: ["admin"],
   },
   {
-    title: "Settings",
+    title: "Configurações",
     href: "/dashboard/settings",
     icon: Settings,
     roles: ["admin", "researcher", "farmer"],
@@ -61,7 +61,7 @@ export function MobileNav() {
           className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
         >
           <Menu className="h-6 w-6" />
-          <span className="sr-only">Toggle Menu</span>
+          <span className="sr-only">Alternar menu</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="pr-0">

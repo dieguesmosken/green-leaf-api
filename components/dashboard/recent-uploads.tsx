@@ -69,13 +69,13 @@ export function RecentUploads() {
           <table className="w-full caption-bottom text-sm">
             <thead className="[&_tr]:border-b">
               <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Image</th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Name</th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Uploaded By</th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Date</th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Imagem</th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Nome</th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Enviado por</th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Data</th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Infection</th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Actions</th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Infecção</th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Ações</th>
               </tr>
             </thead>
             <tbody className="[&_tr:last-child]:border-0">
@@ -131,11 +131,11 @@ export function RecentUploads() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>View details</DropdownMenuItem>
-                        <DropdownMenuItem>View analysis</DropdownMenuItem>
+                        <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                        <DropdownMenuItem>Ver detalhes</DropdownMenuItem>
+                        <DropdownMenuItem>Ver análises</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                        <DropdownMenuItem>Apagar</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>
