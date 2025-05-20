@@ -322,13 +322,11 @@ export default function EquipePage() {
                     <TabsContent value="projetos" className="pt-4">
                       <Accordion type="single" collapsible className="w-full">
                         <AccordionItem value="item-1">
-                          <AccordionTrigger>API de Análise Ambiental</AccordionTrigger>
+                          <AccordionTrigger>Loja Runa Verde</AccordionTrigger>
                           <AccordionContent>
-                            Desenvolvimento de uma API RESTful para processamento e análise de dados ambientais,
-                            utilizando Node.js e Express, com integração a serviços de machine learning para previsão de
-                            tendências.
+                            A Runa Verde é uma plataforma web sustentável desenvolvida com Next.js 15, TypeScript e TailwindCSS, focada em conectar usuários conscientes por meio de uma experiência moderna, responsiva e segura. O sistema conta com autenticação via e-mail e Google OAuth 2.0 (em implementação), gerenciamento de sessões com NextAuth.js e banco de dados MongoDB, oferecendo uma base sólida para futuras expansões como sistemas de pagamento com checkout do Mercado Pago e integração com o ERP Bling via API v3. 🌱💻
                             <div className="mt-2">
-                              <a href="#" className="text-sm text-primary flex items-center gap-1">
+                              <a href="https://runaverde.vercel.app/" className="text-sm text-primary flex items-center gap-1">
                                 Ver mais <ExternalLink className="h-3 w-3" />
                               </a>
                             </div>
