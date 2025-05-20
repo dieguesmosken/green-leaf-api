@@ -32,8 +32,8 @@ export default function HeatmapPage() {
       <div className="grid gap-4 grid-cols-1">
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>Infection Distribution Map</CardTitle>
-            <CardDescription>Heatmap showing the distribution and intensity of bacterial infections</CardDescription>
+            <CardTitle>Mapa de distribuição de infecções</CardTitle>
+            <CardDescription>Mapa de calor mostrando a distribuição e intensidade das infecções bacterianas</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             <div className="h-[600px] w-full relative">
@@ -46,14 +46,14 @@ export default function HeatmapPage() {
         </Card>
         <Tabs defaultValue="regions" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="regions">Regions</TabsTrigger>
-            <TabsTrigger value="statistics">Statistics</TabsTrigger>
+            <TabsTrigger value="regions">Regiões</TabsTrigger>
+            <TabsTrigger value="statistics">Estatisticas</TabsTrigger>
           </TabsList>
           <TabsContent value="regions" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Region Analysis</CardTitle>
-                <CardDescription>Detailed infection statistics by region</CardDescription>
+                <CardTitle>Análise de Região</CardTitle>
+                <CardDescription>Estatísticas detalhadas de infecção por região</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -65,7 +65,7 @@ export default function HeatmapPage() {
                         </CardHeader>
                         <CardContent>
                           <div className="text-2xl font-bold">{Math.floor(Math.random() * 40) + 10}%</div>
-                          <p className="text-xs text-muted-foreground">Infection rate</p>
+                          <p className="text-xs text-muted-foreground">Taxa de infecção</p>
                           <div className="mt-2 h-2 w-full bg-secondary rounded-full overflow-hidden">
                             <div
                               className="h-full bg-primary"

@@ -56,9 +56,9 @@ export function HeatmapControls({
           <SelectValue placeholder="Select heatmap" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="infection">Infection Rate</SelectItem>
-          <SelectItem value="severity">Severity Level</SelectItem>
-          <SelectItem value="time">Time Progression</SelectItem>
+          <SelectItem value="infection">Taxa de infecção</SelectItem>
+          <SelectItem value="severity">Nível de gravidade</SelectItem>
+          <SelectItem value="time">Progressão do tempo</SelectItem>
         </SelectContent>
       </Select>
 
@@ -99,7 +99,7 @@ export function HeatmapControls({
         </PopoverTrigger>
         <PopoverContent className="w-[200px]">
           <div className="space-y-4">
-            <h4 className="font-medium">Severity Filter</h4>
+            <h4 className="font-medium">Filtro de gravidade</h4>
             <div className="space-y-2">
               {["none", "low", "medium", "high", "severe"].map((severity) => (
                 <div key={severity} className="flex items-center space-x-2">
@@ -115,7 +115,7 @@ export function HeatmapControls({
               ))}
             </div>
             <Button className="w-full" onClick={() => setIsFilterOpen(false)}>
-              Apply Filters
+             Aplicar filtros
             </Button>
           </div>
         </PopoverContent>

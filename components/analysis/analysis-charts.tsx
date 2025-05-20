@@ -43,9 +43,9 @@ const severityData = [
 
 const regionData = [
   { name: "Vale do Ribeira", none: 20, low: 30, medium: 25, high: 15, severe: 10 },
-  { name: "Southern Region", none: 15, low: 25, medium: 35, high: 20, severe: 5 },
-  { name: "Central Highlands", none: 10, low: 20, medium: 30, high: 30, severe: 10 },
-  { name: "Eastern Farms", none: 25, low: 35, medium: 20, high: 15, severe: 5 },
+  { name: "Pariquera-Açu", none: 15, low: 25, medium: 35, high: 20, severe: 5 },
+  { name: "Registro", none: 10, low: 20, medium: 30, high: 30, severe: 10 },
+  { name: "Juquia", none: 25, low: 35, medium: 20, high: 15, severe: 5 },
 ]
 
 export function AnalysisCharts() {

@@ -8,7 +8,7 @@ const data = [
     total: Math.floor(Math.random() * 50) + 10,
   },
   {
-    name: "Feb",
+    name: "Fev",
     total: Math.floor(Math.random() * 50) + 10,
   },
   {
@@ -16,11 +16,11 @@ const data = [
     total: Math.floor(Math.random() * 50) + 10,
   },
   {
-    name: "Apr",
+    name: "Abr",
     total: Math.floor(Math.random() * 50) + 10,
   },
   {
-    name: "May",
+    name: "Mai",
     total: Math.floor(Math.random() * 50) + 10,
   },
   {
@@ -32,15 +32,15 @@ const data = [
     total: Math.floor(Math.random() * 50) + 10,
   },
   {
-    name: "Aug",
+    name: "Ago",
     total: Math.floor(Math.random() * 50) + 10,
   },
   {
-    name: "Sep",
+    name: "Set",
     total: Math.floor(Math.random() * 50) + 10,
   },
   {
-    name: "Oct",
+    name: "Out",
     total: Math.floor(Math.random() * 50) + 10,
   },
   {
@@ -48,7 +48,7 @@ const data = [
     total: Math.floor(Math.random() * 50) + 10,
   },
   {
-    name: "Dec",
+    name: "Dez",
     total: Math.floor(Math.random() * 50) + 10,
   },
 ]

@@ -27,10 +27,14 @@ export function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+        <Button variant="ghost" className="relative h-8 w-8 rounded-full ">
+        {/* bg-transparent p-0 hover:bg-transparent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background disabled:pointer-events-none data-[state=open]:bg-transparent data-[state=open]:text-accent"> */}
           <Avatar className="h-8 w-8">
-            <AvatarImage src="/placeholder.svg?height=32&width=32" alt={user?.name || "User"} />
-            <AvatarFallback>{user?.name?.charAt(0) || "U"}</AvatarFallback>
+            <AvatarImage src={"/default-avatar.png"} alt={user?.name || "User Avatar"} />
+            {/* Voltar para a primeira letra do nome do usuário ou um caractere padrão */}
+            <AvatarFallback>
+              {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -43,7 +47,7 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push("/dashboard/profile")}>
+          <DropdownMenuItem onClick={() => router.push("/perfil")}>
             <User className="mr-2 h-4 w-4" />
             <span>Perfil</span>
           </DropdownMenuItem>
