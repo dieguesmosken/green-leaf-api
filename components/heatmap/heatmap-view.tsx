@@ -52,7 +52,7 @@ export function HeatmapView({ selectedHeatmap, dateRange, severityFilter }: Heat
           type: "geojson",
           data: {
             type: "FeatureCollection",
-            features: filterData(allData),
+            features: filterData(allData, dateRange, severityFilter),
           },
         })
 
@@ -112,11 +112,14 @@ export function HeatmapView({ selectedHeatmap, dateRange, severityFilter }: Heat
           new mapboxgl.Popup()
             .setLngLat(coordinates as [number, number])
             .setHTML(
-              `<div class="p-2">
-                <h3 class="font-bold">Infection Data</h3>
-                <p>Intensity: ${(intensity * 100).toFixed(1)}%</p>
-                <p>Severity: ${severity}</p>
-                <p>Date: ${date}</p>
+              `<div style="padding: 10px; font-size: 14px; line-height: 1.5; color: #333; background-color: #fff; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
+                <h3 style="font-weight: bold; margin-bottom: 5px;">Dados da Analise</h3>
+                <p><strong>Intensidade:</strong> ${(intensity * 100).toFixed(1)}%</p>
+                <p><strong>Gravidade:</strong> ${severity}</p>
+                <p><strong>Data:</strong> ${date}</p>
+                <p><strong>Latitude:</strong> ${coordinates[1].toFixed(5)}</p>
+                <p><strong>Longitude:</strong> ${coordinates[0].toFixed(5)}</p>
+                <p><strong>Descrição:</strong> ${feature.properties?.description || "Sem descrição"}</p>
               </div>`
             )
             .addTo(map.current as mapboxgl.Map)
@@ -133,7 +136,7 @@ export function HeatmapView({ selectedHeatmap, dateRange, severityFilter }: Heat
     }
 
     if (map.current && map.current.isStyleLoaded() && map.current.getSource("infection-data")) {
-      const filtered = filterData(allData)
+      const filtered = filterData(allData, dateRange, severityFilter)
       ;(map.current.getSource("infection-data") as mapboxgl.GeoJSONSource).setData({
         type: "FeatureCollection",
         features: filtered,
@@ -156,14 +159,14 @@ function getSeverityLabel(intensity: number): string {
   return getSeverityFromIntensity(intensity).charAt(0).toUpperCase() + getSeverityFromIntensity(intensity).slice(1)
 }
 
-function filterData(data: any[]) {
+function filterData(data: any[], dateRange: { from: Date; to: Date }, severityFilter: string[]) {
   return data.filter((feature) => {
     const date = new Date(feature.properties.date)
     const severity = feature.properties.severity
     return (
-      date >= new Date(window.heatmapDateRange?.from ?? 0) &&
-      date <= new Date(window.heatmapDateRange?.to ?? Date.now()) &&
-      window.heatmapSeverityFilter?.includes(severity)
+      date >= dateRange.from &&
+      date <= dateRange.to &&
+      severityFilter.includes(severity)
     )
   })
 }
