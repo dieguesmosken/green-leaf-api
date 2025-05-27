@@ -78,7 +78,7 @@ export default function ProfilePage() {
                 </Button>
                 {user.role === "admin" && (
                   <Button variant="outline" className="justify-start border-primary text-primary" asChild>
-                    <Link href="/admin">
+                    <Link href="/dashboard">
                       <BarChartIcon className="mr-2 h-4 w-4" />
                       Painel Administrativo
                     </Link>
@@ -151,7 +151,7 @@ export default function ProfilePage() {
                     <Link href="/dashboard/uploads">Ver Todos os Uploads</Link>
                   </Button>
                   <Button variant="outline" asChild>
-                    <Link href="/perfil/avaliacoes">Ver Todas as Avaliações</Link>
+                    <Link href="/perfil/avaliacoes">Ver Todas as Analises</Link>
                   </Button>
                 </CardFooter>
               </Card>

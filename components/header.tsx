@@ -15,10 +15,10 @@ export function Header() {
           <span className="text-lg font-bold">Green Leaf</span>
         </Link>
         <nav className="flex items-center space-x-4">
-          <Link href="/sobre" className="text-sm text-muted-foreground hover:underline">
+          <Link href="/about" className="text-sm text-muted-foreground hover:underline">
             Sobre
           </Link>
-          <Link href="/contato" className="text-sm text-muted-foreground hover:underline">
+          <Link href="/contact" className="text-sm text-muted-foreground hover:underline">
             Contato
           </Link>
           {user ? (
