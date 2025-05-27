@@ -6,6 +6,8 @@ export interface IUser {
   email: string
   password: string
   role: "admin" | "researcher" | "farmer"
+  bio?: string
+  avatar?: string
   location?: {
     type: string
     coordinates: number[]
@@ -36,11 +38,19 @@ const userSchema = new mongoose.Schema<IUserDocument>({
   password: {
     type: String,
     required: true,
-  },
-  role: {
+  },  role: {
     type: String,
     enum: ["admin", "researcher", "farmer"],
     default: "farmer",
+  },
+  bio: {
+    type: String,
+    maxlength: 500,
+    default: "",
+  },
+  avatar: {
+    type: String,
+    default: "",
   },
   location: {
     type: {

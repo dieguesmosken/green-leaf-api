@@ -8,7 +8,7 @@ import { Footer } from "@/components/footer"
 import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ShoppingBag, Star, User, Settings, LogOut, BarChartIcon } from "lucide-react"
 
 export default function ProfilePage() {
@@ -43,8 +43,8 @@ export default function ProfilePage() {
           <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8">
             <aside className="space-y-6">
               <Card className="shadow-md">                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center">
-                    <Avatar className="h-24 w-24 mb-4">
+                  <div className="flex flex-col items-center text-center">                    <Avatar className="h-24 w-24 mb-4">
+                      <AvatarImage src={user.avatar} alt="Avatar do usuário" />
                       <AvatarFallback className="bg-emerald-100 text-emerald-700 text-2xl">
                         {user.name?.charAt(0)?.toUpperCase() || "U"}
                       </AvatarFallback>

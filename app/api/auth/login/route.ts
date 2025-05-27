@@ -33,9 +33,7 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json({
       success: true,
       user: userData,
-    })
-
-    response.cookies.set({
+    })    response.cookies.set({
       name: "token",
       value: token,
       httpOnly: true,
@@ -47,7 +45,7 @@ export async function POST(request: NextRequest) {
 
     return response
   } catch (error: any) {
-    console.error("Login error:", error)
+    console.error("Login error:", error.message)
     return NextResponse.json({ error: "Invalid login credentials" }, { status: 401 })
   }
 }

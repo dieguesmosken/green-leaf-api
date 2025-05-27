@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { AdvancedImageUpload } from "@/components/ui/advanced-image-upload"
+import { ImageUpload } from "@/components/ui/image-upload"
 import { ArrowLeft, Loader2 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
@@ -37,7 +37,8 @@ export default function EditProfilePage() {
       })
     }
   }, [user])
-  const handleImageChange = (imageUrl: string, thumbnail?: string) => {
+
+  const handleImageChange = (imageUrl: string) => {
     setFormData(prev => ({ ...prev, avatar: imageUrl }))
   }
 
@@ -124,18 +125,15 @@ export default function EditProfilePage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">                {/* Upload da foto de perfil */}
-                <AdvancedImageUpload
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Upload da foto de perfil */}
+                <ImageUpload
                   currentImage={formData.avatar}
                   onImageChange={handleImageChange}
                   fallbackText={formData.name?.charAt(0)?.toUpperCase() || "U"}
                   label="Foto de Perfil"
                   size="lg"
                   disabled={isLoading}
-                  enableCrop={true}
-                  enableCompression={true}
-                  maxSizeKB={500}
-                  cropAspectRatio={1}
                 />
 
                 {/* Nome */}
