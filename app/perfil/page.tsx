@@ -42,16 +42,15 @@ export default function ProfilePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8">
             <aside className="space-y-6">
-              <Card className="shadow-md">
-                <CardContent className="pt-6">
+              <Card className="shadow-md">                <CardContent className="pt-6">
                   <div className="flex flex-col items-center text-center">
                     <Avatar className="h-24 w-24 mb-4">
                       <AvatarFallback className="bg-emerald-100 text-emerald-700 text-2xl">
-                        {user.name.charAt(0).toUpperCase()}
+                        {user.name?.charAt(0)?.toUpperCase() || "U"}
                       </AvatarFallback>
                     </Avatar>
-                    <h2 className="text-xl font-bold text-primary">{user.name}</h2>
-                    <p className="text-muted-foreground">{user.email}</p>
+                    <h2 className="text-xl font-bold text-primary">{user.name || "Usuário"}</h2>
+                    <p className="text-muted-foreground">{user.email || "Email não informado"}</p>
                   </div>
                 </CardContent>
               </Card>

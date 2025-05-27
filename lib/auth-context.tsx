@@ -9,6 +9,8 @@ type User = {
   name: string
   email: string
   role: "admin" | "researcher" | "farmer"
+  bio?: string
+  avatar?: string
 }
 
 type AuthContextType = {
@@ -17,7 +19,7 @@ type AuthContextType = {
   register: (name: string, email: string, password: string, role: string) => Promise<void>
   logout: () => Promise<void>
   isLoading: boolean
-  updateUser: (data: { name: string; email: string }) => Promise<void>
+  updateUser: (data: { name: string; email: string; bio?: string; avatar?: string }) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -109,8 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error("Logout error:", error)
     }
   }
-
-  const updateUser = async (data: { name: string; email: string }) => {
+  const updateUser = async (data: { name: string; email: string; bio?: string; avatar?: string }) => {
     if (!user) return
     setIsLoading(true)
     try {
