@@ -56,6 +56,29 @@ export const getUserProfile = async (uid: string): Promise<UserProfile | null> =
     if (userDoc.exists()) {
       return { id: uid, ...userDoc.data() } as UserProfile
     }
+    
+    // Se o documento não existe, mas temos um usuário autenticado, criar o perfil
+    const currentUser = auth.currentUser
+    if (currentUser && currentUser.uid === uid) {
+      console.log("Criando perfil do usuário no Firestore...")
+      const newProfile: UserProfile = {
+        id: uid,
+        name: currentUser.displayName || "Usuário",
+        email: currentUser.email || "",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        role: "user",
+        isAdmin: false,
+        emailVerified: currentUser.emailVerified,
+        twoFactorEnabled: false,
+        lastLoginAt: new Date().toISOString(),
+        addresses: []
+      }
+      
+      await setDoc(doc(db, "users", uid), newProfile)
+      return newProfile
+    }
+    
     return null
   } catch (error) {
     console.error("Error getting user profile:", error)
@@ -78,7 +101,34 @@ export const updateUserProfile = async (uid: string, data: Partial<UserProfile>)
 export const signIn = async (email: string, password: string) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password)
-    const userProfile = await getUserProfile(userCredential.user.uid)
+    
+    // Buscar ou criar perfil do usuário
+    let userProfile = await getUserProfile(userCredential.user.uid)
+    
+    // Se ainda não existir perfil (caso raro), criar um
+    if (!userProfile) {
+      userProfile = {
+        id: userCredential.user.uid,
+        name: userCredential.user.displayName || "Usuário",
+        email: userCredential.user.email || "",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        role: "user",
+        isAdmin: false,
+        emailVerified: userCredential.user.emailVerified,
+        twoFactorEnabled: false,
+        lastLoginAt: new Date().toISOString(),
+        addresses: []
+      }
+      await setDoc(doc(db, "users", userCredential.user.uid), userProfile)
+    } else {
+      // Atualizar último login
+      await updateUserProfile(userCredential.user.uid, { 
+        lastLoginAt: new Date().toISOString(),
+        emailVerified: userCredential.user.emailVerified
+      })
+    }
+    
     return { user: userCredential.user, profile: userProfile }
   } catch (error: any) {
     throw new Error(error.message || "Erro ao fazer login")

@@ -15,18 +15,20 @@ import { EmailVerification } from "@/components/auth/email-verification"
 import { AvatarUpload } from "@/components/auth/avatar-upload"
 import { PasswordManager } from "@/components/auth/password-manager"
 import { AccountManager } from "@/components/auth/account-manager"
+import { DebugAuth } from "@/components/auth/debug-auth"
 import { ShoppingBag, Star, User, Settings, LogOut, BarChartIcon, Shield, Mail, Camera } from "lucide-react"
 
 export default function ProfilePage() {
-  const { user, firebaseUser, logout } = useAuth()
+  const { user, firebaseUser, logout, isLoading } = useAuth()
   const router = useRouter()
   const [activeTab, setActiveTab] = useState("overview")
 
   useEffect(() => {
-    if (!user) {
+    // Aguardar o carregamento antes de redirecionar
+    if (!isLoading && !user) {
       router.push("/login?redirect=/perfil")
     }
-  }, [user, router])
+  }, [user, router, isLoading])
 
   const getUserInitials = () => {
     return user?.name?.split(' ')
@@ -36,8 +38,45 @@ export default function ProfilePage() {
       .slice(0, 2) || 'U'
   }
 
+  // Mostrar loading se ainda estiver carregando
+  if (isLoading) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-1 py-12 bg-background">
+          <div className="container max-w-6xl">
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                <p className="mt-2 text-muted-foreground">Carregando perfil...</p>
+              </div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Mostrar debug se não houver usuário
   if (!user) {
-    return null
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-1 py-12 bg-background">
+          <div className="container max-w-6xl">
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-primary">Debug - Problema no Perfil</h1>
+              <p className="text-muted-foreground mt-2">
+                Informações de debug para identificar o problema.
+              </p>
+            </div>
+            <DebugAuth />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
   }
 
   return (

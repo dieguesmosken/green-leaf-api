@@ -40,23 +40,49 @@ export function FirebaseAuthProvider({ children }: { children: React.ReactNode }
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       try {
         setFirebaseUser(firebaseUser)
         
         if (firebaseUser) {
-          // Usuário autenticado - buscar perfil do Firestore
-          const userProfile = await getUserProfile(firebaseUser.uid)
+          console.log("Firebase user detectado:", firebaseUser.email)
+          
+          // Usuário autenticado - buscar ou criar perfil do Firestore
+          let userProfile = await getUserProfile(firebaseUser.uid)
+          
+          // Se não existe perfil, criar um novo
+          if (!userProfile) {
+            console.log("Perfil não encontrado, criando novo...")
+            userProfile = {
+              id: firebaseUser.uid,
+              name: firebaseUser.displayName || "Usuário",
+              email: firebaseUser.email || "",
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              role: "user",
+              isAdmin: false,
+              emailVerified: firebaseUser.emailVerified,
+              twoFactorEnabled: false,
+              lastLoginAt: new Date().toISOString(),
+              addresses: []
+            }
+            
+            // Salvar perfil no Firestore
+            await updateUserProfile(firebaseUser.uid, userProfile)
+          }
+          
+          console.log("Perfil do usuário carregado:", userProfile)
           setUser(userProfile)
         } else {
           // Usuário não autenticado
+          console.log("Usuário não autenticado")
           setUser(null)
         }
       } catch (error) {
         console.error("Erro ao verificar autenticação:", error)
         setUser(null)
+        toast.error("Erro ao carregar perfil do usuário")
       } finally {
         setIsLoading(false)
       }
