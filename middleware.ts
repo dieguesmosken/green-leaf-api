@@ -1,24 +1,42 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
+// Rotas que precisam de autenticação
+const protectedRoutes = ['/dashboard', '/profile', '/perfil']
+
+// Rotas de autenticação  
+const authRoutes = ['/login', '/register']
+
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get("token")?.value
-  const isAuthPage = request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/register")
-  const isDashboardPage = request.nextUrl.pathname.startsWith("/dashboard")
+  const { pathname } = request.nextUrl
+  
+  // Verificar se é uma rota protegida
+  const isProtectedRoute = protectedRoutes.some(route => 
+    pathname.startsWith(route)
+  )
+  
+  // Verificar se é uma rota de autenticação
+  const isAuthRoute = authRoutes.some(route => 
+    pathname.startsWith(route)
+  )
 
-  // If trying to access dashboard without token, redirect to login
-  if (isDashboardPage && !token) {
-    return NextResponse.redirect(new URL("/login", request.url))
-  }
-
-  // If trying to access auth pages with token, redirect to dashboard
-  if (isAuthPage && token) {
-    return NextResponse.redirect(new URL("/dashboard", request.url))
-  }
-
+  // Para Firebase Auth, a verificação será feita no lado do cliente
+  // O middleware apenas permite que as rotas sejam acessadas
+  // A proteção real será feita pelos componentes ProtectedRoute e AuthGuard
+  
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/register"],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public (public files)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico|public).*)',
+  ],
 }

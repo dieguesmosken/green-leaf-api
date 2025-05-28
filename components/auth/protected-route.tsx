@@ -5,26 +5,22 @@ import { useRouter } from "next/navigation"
 import { useFirebaseAuth } from "@/context/firebase-auth-context"
 import { Loader2 } from "lucide-react"
 
-interface AuthGuardProps {
+interface ProtectedRouteProps {
   children: React.ReactNode
   fallback?: React.ReactNode
   redirectTo?: string
 }
 
-/**
- * AuthGuard - redireciona usuários autenticados para uma página específica
- * Usado em páginas de login/register para evitar que usuários logados acessem
- */
-export function AuthGuard({ 
+export function ProtectedRoute({ 
   children, 
   fallback,
-  redirectTo = "/dashboard" 
-}: AuthGuardProps) {
+  redirectTo = "/login" 
+}: ProtectedRouteProps) {
   const { isAuthenticated, isLoading } = useFirebaseAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       router.push(redirectTo)
     }
   }, [isAuthenticated, isLoading, router, redirectTo])
@@ -39,7 +35,8 @@ export function AuthGuard({
       </div>
     )
   }
-  if (isAuthenticated) {
+
+  if (!isAuthenticated) {
     return null // Redirect será feito pelo useEffect
   }
 
