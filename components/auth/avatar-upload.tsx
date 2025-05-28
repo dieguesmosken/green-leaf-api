@@ -39,14 +39,15 @@ export function AvatarUpload() {
     if (file.size > 5 * 1024 * 1024) {
       setError("A imagem deve ter no máximo 5MB")
       return
-    }
+    }    setError("")
+    setSelectedFile(file)
 
-    setError("")
-    setSelectedFile(file)    // Criar preview
+    // Criar preview
     const reader = new FileReader()
     reader.onload = (e) => {
       setPreview(e.target?.result as string)
-    }    reader.readAsDataURL(file)
+    }
+    reader.readAsDataURL(file)
   }
 
   const handleUpload = async () => {
