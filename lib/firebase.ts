@@ -20,7 +20,7 @@ const app = initializeApp(firebaseConfig)
 
 // Initialize Firebase services
 export const auth = getAuth(app)
-export const db = getFirestore(app)
+export const db = getFirestore(app)  // Usando banco padrão que funciona
 export const storage = getStorage(app)
 
 // Initialize Analytics only on client side
