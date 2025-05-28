@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { AdvancedImageUpload } from "@/components/ui/advanced-image-upload"
+import { UploadProviderStatus } from "@/components/ui/upload-provider-status"
 import { ArrowLeft, Loader2 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
@@ -134,8 +135,7 @@ export default function EditProfilePage() {
                   disabled={isLoading}
                   enableCrop={true}
                   enableCompression={true}
-                  maxSizeKB={500}
-                  cropAspectRatio={1}
+                  maxSizeKB={500}                  cropAspectRatio={1}
                 />
 
                 {/* Nome */}
@@ -211,10 +211,14 @@ export default function EditProfilePage() {
                       "Salvar Alterações"
                     )}
                   </Button>
-                </div>
-              </form>
+                </div>              </form>
             </CardContent>
           </Card>
+
+          {/* Status dos Provedores de Upload */}
+          <div className="mt-6">
+            <UploadProviderStatus />
+          </div>
         </div>
       </div>
       <Footer />

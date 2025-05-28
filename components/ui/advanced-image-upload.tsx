@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Upload, Loader2, X, Crop, RotateCw, ZoomIn, ZoomOut } from "lucide-react"
-import { uploadToImgur, validateImageFile } from "@/lib/imgur"
+import { uploader, validateImageFile } from "@/lib/multi-upload"
 import { compressImage, resizeImage, fileToDataURL, generateThumbnail } from "@/lib/image-processing"
 import { imageCache } from "@/lib/image-cache"
 import { useToast } from "@/hooks/use-toast"
@@ -225,30 +225,58 @@ export function AdvancedImageUpload({
         })
       }
 
-      // Upload para Imgur
-      const imageUrl = await uploadToImgur(processedFile)
+      // Upload com sistema de múltiplos provedores
+      const uploadResult = await uploader.upload(processedFile)
+      
+      if (!uploadResult.success) {
+        throw new Error(uploadResult.error || "Falha no upload")
+      }
       
       // Gerar thumbnail se necessário
       const thumbnail = await generateThumbnail(processedFile, 150)
       
-      // Salvar no cache
-      const blob = new Blob([processedFile], { type: processedFile.type })
-      await imageCache.set(imageUrl, blob)
+      // Salvar no cache apenas se não for temporário
+      if (!uploadResult.isTemporary) {
+        const blob = new Blob([processedFile], { type: processedFile.type })
+        await imageCache.set(uploadResult.url!, blob)
+      }
       
-      onImageChange(imageUrl, thumbnail)
+      onImageChange(uploadResult.url!, thumbnail)
+      
+      // Mostrar mensagem diferente para uploads temporários
+      const message = uploadResult.isTemporary 
+        ? `Imagem salva temporariamente (${uploadResult.provider})`
+        : `Imagem enviada com sucesso via ${uploadResult.provider}`
       
       toast({
-        title: "Sucesso",
-        description: "Imagem carregada e processada com sucesso!"
+        title: uploadResult.isTemporary ? "⚠️ Upload Temporário" : "✅ Sucesso",
+        description: message,
+        variant: uploadResult.isTemporary ? "default" : "default"
       })
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Erro no upload:", error)
+      
+      // Mensagens de erro mais específicas
+      let errorMessage = "Erro desconhecido no upload"
+      
+      if (error.message.includes("capacity")) {
+        errorMessage = "Serviços de upload temporariamente indisponíveis. Tente novamente em alguns minutos."
+      } else if (error.message.includes("network")) {
+        errorMessage = "Erro de conexão. Verifique sua internet e tente novamente."
+      } else if (error.message.includes("indisponíveis")) {
+        errorMessage = "Todos os serviços de upload estão indisponíveis. Tente novamente mais tarde."
+      } else if (error.message) {
+        errorMessage = error.message
+      }
+      
       toast({
-        title: "Erro",
-        description: error instanceof Error ? error.message : "Falha ao carregar a imagem.",
+        title: "❌ Erro no Upload",
+        description: errorMessage,
         variant: "destructive"
-      })
-    } finally {
+      })    } finally {
       setIsUploading(false)
+      setShowCropDialog(false)
+      setPreviewUrl("")
     }
   }
 

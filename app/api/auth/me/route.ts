@@ -5,32 +5,44 @@ import jwt from "jsonwebtoken"
 
 export async function GET(request: NextRequest) {
   try {
+    console.log('🔍 [DEBUG] Tentando obter informações do usuário...')
+    
     // Get token from cookies
     const token = request.cookies.get("token")?.value
+    console.log('🍪 [DEBUG] Token do cookie:', token ? `${token.substring(0, 20)}...` : 'NENHUM')
 
     if (!token) {
+      console.log('❌ [DEBUG] Token não encontrado nos cookies')
       return NextResponse.json({ error: "Authentication required" }, { status: 401 })
     }
 
     // Verify token
+    console.log('🔐 [DEBUG] Verificando token...')
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string }
+    console.log('✅ [DEBUG] Token válido, ID do usuário:', decoded.id)
 
     // Connect to the database
+    console.log('🔌 [DEBUG] Conectando ao banco...')
     await connectToDatabase()
+    console.log('✅ [DEBUG] Conectado ao banco')
 
     // Find user by ID
+    console.log('👤 [DEBUG] Buscando usuário por ID...')
     const user = await User.findById(decoded.id).select("-password")
 
     if (!user) {
+      console.log('❌ [DEBUG] Usuário não encontrado no banco')
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
 
+    console.log('✅ [DEBUG] Usuário encontrado:', user.name)
     return NextResponse.json({
       success: true,
       user,
     })
   } catch (error: any) {
-    console.error("Auth error:", error.message)
+    console.error("❌ [DEBUG] Auth error:", error.message)
+    console.error("❌ [DEBUG] Stack trace:", error.stack)
     return NextResponse.json({ error: "Invalid or expired token" }, { status: 401 })
   }
 }
