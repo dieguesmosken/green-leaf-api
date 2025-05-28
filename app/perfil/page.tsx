@@ -15,8 +15,11 @@ import { EmailVerification } from "@/components/auth/email-verification"
 import { AvatarUpload } from "@/components/auth/avatar-upload"
 import { PasswordManager } from "@/components/auth/password-manager"
 import { AccountManager } from "@/components/auth/account-manager"
-import { DebugAuth } from "@/components/auth/debug-auth"
-import { ShoppingBag, Star, User, Settings, LogOut, BarChartIcon, Shield, Mail, Camera } from "lucide-react"
+import { TwoFactorAuthentication } from "@/components/auth/two-factor-authentication"
+import { SessionManager } from "@/components/auth/session-manager"
+import { AuditLogger } from "@/components/auth/audit-logger"
+import { RateLimitManager } from "@/components/auth/rate-limit-manager"
+import { ShoppingBag, Star, User, Settings, LogOut, BarChartIcon, Shield, Mail, Camera, Smartphone, Monitor, FileText, Zap } from "lucide-react"
 
 export default function ProfilePage() {
   const { user, firebaseUser, logout, isLoading } = useAuth()
@@ -58,25 +61,9 @@ export default function ProfilePage() {
     )
   }
 
-  // Mostrar debug se não houver usuário
+  // Retornar null se não houver usuário (redirecionamento será feito pelo useEffect)
   if (!user) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 py-12 bg-background">
-          <div className="container max-w-6xl">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-primary">Debug - Problema no Perfil</h1>
-              <p className="text-muted-foreground mt-2">
-                Informações de debug para identificar o problema.
-              </p>
-            </div>
-            <DebugAuth />
-          </div>
-        </main>
-        <Footer />
-      </div>
-    )
+    return null
   }
 
   return (
@@ -108,10 +95,12 @@ export default function ProfilePage() {
                     </Avatar>
                     <h2 className="text-xl font-semibold">{user.name}</h2>
                     <p className="text-muted-foreground text-sm">{user.email}</p>
-                    
-                    <div className="flex gap-2 mt-3">
+                      <div className="flex gap-2 mt-3 flex-wrap">
                       <Badge variant={firebaseUser?.emailVerified ? "default" : "secondary"}>
                         {firebaseUser?.emailVerified ? "Email Verificado" : "Email Pendente"}
+                      </Badge>
+                      <Badge variant={user.twoFactorEnabled ? "default" : "outline"}>
+                        {user.twoFactorEnabled ? "2FA Ativo" : "2FA Desativado"}
                       </Badge>
                       {user.role === "admin" && (
                         <Badge variant="destructive">Admin</Badge>
@@ -148,14 +137,44 @@ export default function ProfilePage() {
                     >
                       <Shield className="mr-2 h-4 w-4" />
                       Segurança
-                    </Button>
-                    <Button
+                    </Button>                    <Button
                       variant={activeTab === "verification" ? "default" : "ghost"}
                       className="w-full justify-start"
                       onClick={() => setActiveTab("verification")}
                     >
                       <Mail className="mr-2 h-4 w-4" />
                       Verificação
+                    </Button>
+                    <Button
+                      variant={activeTab === "2fa" ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setActiveTab("2fa")}
+                    >
+                      <Smartphone className="mr-2 h-4 w-4" />
+                      Autenticação 2FA
+                    </Button>                    <Button
+                      variant={activeTab === "sessions" ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setActiveTab("sessions")}
+                    >
+                      <Monitor className="mr-2 h-4 w-4" />
+                      Sessões Ativas
+                    </Button>
+                    <Button
+                      variant={activeTab === "audit" ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setActiveTab("audit")}
+                    >
+                      <FileText className="mr-2 h-4 w-4" />
+                      Log de Auditoria
+                    </Button>
+                    <Button
+                      variant={activeTab === "rate-limiting" ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setActiveTab("rate-limiting")}
+                    >
+                      <Zap className="mr-2 h-4 w-4" />
+                      Rate Limiting
                     </Button>
                     <Button
                       variant={activeTab === "account" ? "default" : "ghost"}
@@ -196,11 +215,16 @@ export default function ProfilePage() {
                           <p className="text-sm text-muted-foreground mt-1">
                             {user.role === "admin" ? "Administrador" : "Usuário"}
                           </p>
-                        </div>
-                        <div>
+                        </div>                        <div>
                           <label className="text-sm font-medium">Status do Email</label>
                           <p className="text-sm text-muted-foreground mt-1">
                             {firebaseUser?.emailVerified ? "Verificado" : "Pendente de verificação"}
+                          </p>
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium">Autenticação 2FA</label>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {user.twoFactorEnabled ? "Ativado" : "Desativado"}
                           </p>
                         </div>
                       </div>
@@ -222,9 +246,7 @@ export default function ProfilePage() {
 
                 <TabsContent value="security">
                   <PasswordManager />
-                </TabsContent>
-
-                <TabsContent value="verification">
+                </TabsContent>                <TabsContent value="verification">
                   {!firebaseUser?.emailVerified ? (
                     <EmailVerification />
                   ) : (
@@ -243,6 +265,20 @@ export default function ProfilePage() {
                       </CardContent>
                     </Card>
                   )}
+                </TabsContent>
+
+                <TabsContent value="2fa">
+                  <TwoFactorAuthentication />
+                </TabsContent>                <TabsContent value="sessions">
+                  <SessionManager />
+                </TabsContent>
+
+                <TabsContent value="audit">
+                  <AuditLogger />
+                </TabsContent>
+
+                <TabsContent value="rate-limiting">
+                  <RateLimitManager />
                 </TabsContent>
 
                 <TabsContent value="account">

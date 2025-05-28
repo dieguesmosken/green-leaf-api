@@ -90,7 +90,7 @@ export const updateUserProfile = async (uid: string, data: Partial<UserProfile>)
   try {
     await updateDoc(doc(db, "users", uid), {
       ...data,
-      updatedAt: serverTimestamp()
+      updatedAt: new Date().toISOString()
     })
   } catch (error: any) {
     throw new Error(error.message || "Erro ao atualizar perfil")
@@ -150,13 +150,13 @@ export const signUp = async (name: string, email: string, password: string) => {
       id: userCredential.user.uid,
       name,
       email,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       role: "user",
       isAdmin: false,
       emailVerified: false,
       twoFactorEnabled: false,
-      lastLoginAt: serverTimestamp(),
+      lastLoginAt: new Date().toISOString(),
       addresses: []
     }
     
@@ -217,11 +217,10 @@ export const updateUserPassword = async (currentPassword: string, newPassword: s
     
     // Update password
     await updatePassword(user, newPassword)
-    
-    // Update user profile in Firestore
+      // Update user profile in Firestore
     await updateUserProfile(user.uid, { 
-      updatedAt: serverTimestamp(),
-      lastLoginAt: serverTimestamp()
+      updatedAt: new Date().toISOString(),
+      lastLoginAt: new Date().toISOString()
     })
   } catch (error: any) {
     throw new Error(error.message || "Erro ao atualizar senha")
