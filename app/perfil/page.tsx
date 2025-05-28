@@ -39,6 +39,7 @@ export default function ProfilePage() {
   if (!user) {
     return null
   }
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -214,8 +215,7 @@ export default function ProfilePage() {
                           Gerencie as configurações da sua conta
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="space-y-4">
-                        <Button onClick={logout} variant="outline" className="w-full">
+                      <CardContent className="space-y-4">                        <Button onClick={logout} variant="outline" className="w-full">
                           <LogOut className="mr-2 h-4 w-4" />
                           Sair da Conta
                         </Button>
@@ -231,119 +231,5 @@ export default function ProfilePage() {
         </div>
       </main>
       <Footer />
-    </div>
-  )
-                    </Avatar>
-                    <h2 className="text-xl font-bold text-primary">{user.name}</h2>
-                    <p className="text-muted-foreground">{user.email}</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <nav className="flex flex-col gap-2">
-                <Button variant="ghost" className="justify-start" asChild>
-                  <Link href="/perfil">
-                    <User className="mr-2 h-4 w-4" />
-                    Informações Pessoais
-                  </Link>
-                </Button>
-              
-                <Button variant="ghost" className="justify-start" asChild>
-                  <Link href="/perfil/analises">
-                    <Star className="mr-2 h-4 w-4" />
-                    Minhas Analises
-                  </Link>
-                </Button>
-                <Button variant="ghost" className="justify-start" asChild>
-                  <Link href="/perfil/configuracoes">
-                    <Settings className="mr-2 h-4 w-4" />
-                    Configurações
-                  </Link>
-                </Button>
-                {user.role === "admin" && (
-                  <Button variant="outline" className="justify-start border-primary text-primary" asChild>
-                    <Link href="/dashboard">
-                      <BarChartIcon className="mr-2 h-4 w-4" />
-                      Painel Administrativo
-                    </Link>
-                  </Button>
-                )}
-                <Button
-                  variant="destructive"
-                  className="justify-start"
-                  onClick={logout}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sair
-                </Button>
-              </nav>
-            </aside>
-
-            <section className="space-y-6">
-              <Card className="shadow-md">
-                <CardHeader>
-                  <CardTitle>Informações Pessoais</CardTitle>
-                  <CardDescription>Seus dados pessoais e informações de contato.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <dl className="space-y-4">
-                    <div>
-                      <dt className="text-sm font-medium text-muted-foreground">Nome</dt>
-                      <dd>{user.name}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-sm font-medium text-muted-foreground">Email</dt>
-                      <dd>{user.email}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-sm font-medium text-muted-foreground">Membro desde</dt>
-                      <dd>{user.createdAt ? new Date(user.createdAt as any).toLocaleDateString("pt-BR", { year: "numeric", month: "long", day: "numeric" }) : "Data não disponível"}</dd>
-                    </div>
-                  </dl>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="outline" asChild>
-                    <Link href="/perfil/editar">Editar Informações</Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-
-              <Card className="shadow-md">
-                <CardHeader>
-                  <CardTitle>Atividade Recente</CardTitle>
-                  <CardDescription>Seus upload e analises recentes.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="font-medium mb-2">Últimos Uploads</h3>
-                      <div className="text-center py-4 bg-muted/30 rounded-lg">
-                        <p className="text-muted-foreground text-sm">Você ainda não realizou nenhum upload.</p>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="font-medium mb-2">Últimas Analises</h3>
-                      <div className="text-center py-4 bg-muted/30 rounded-lg">
-                        <p className="text-muted-foreground text-sm">Você ainda não realizou nenhum upload.</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between">
-                  <Button variant="outline" asChild>
-                    <Link href="/dashboard/uploads">Ver Todos os Uploads</Link>
-                  </Button>
-                  <Button variant="outline" asChild>
-                    <Link href="/perfil/avaliacoes">Ver Todas as Analises</Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            </section>
-          </div>
-        </div>
-      </main>
-      <Footer />
-    </div>
-  )
+    </div>  )
 }
