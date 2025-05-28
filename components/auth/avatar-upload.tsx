@@ -11,10 +11,12 @@ import { Camera, Upload, X, User } from "lucide-react"
 import { useAuth } from "@/context/firebase-auth-context"
 import { uploadUserAvatar } from "@/lib/firebase-utils"
 import { uploadAvatarAlternative } from "@/lib/upload-alternative"
+import { uploadAvatarRobust } from "@/lib/avatar-upload-service"
 
 export function AvatarUpload() {
   const { user, firebaseUser, updateUser, isLoading: authLoading } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [preview, setPreview] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [error, setError] = useState("")
@@ -44,9 +46,9 @@ export function AvatarUpload() {
     const reader = new FileReader()
     reader.onload = (e) => {
       setPreview(e.target?.result as string)
-    }
-    reader.readAsDataURL(file)
+    }    reader.readAsDataURL(file)
   }
+
   const handleUpload = async () => {
     if (!canUpload) {
       setError("Aguarde o carregamento da autenticação ou selecione um arquivo")
@@ -56,25 +58,19 @@ export function AvatarUpload() {
     try {
       setIsLoading(true)
       setError("")
+      setUploadProgress(0)
 
-      console.log("🚀 Iniciando upload de avatar para usuário:", firebaseUser.uid)
+      console.log("🚀 Iniciando upload robusto de avatar para usuário:", firebaseUser.uid)
 
-      // Tentar primeiro com a função padrão
-      let imageUrl: string
-      
-      try {
-        console.log("📤 Tentativa 1: Upload padrão")
-        imageUrl = await uploadUserAvatar(firebaseUser.uid, selectedFile)
-      } catch (primaryError: any) {
-        console.log("❌ Upload padrão falhou:", primaryError.message)
-        
-        if (primaryError.message.includes('unauthenticated') || primaryError.code === 'storage/unauthenticated') {
-          console.log("🔄 Tentativa 2: Upload alternativo")
-          imageUrl = await uploadAvatarAlternative(firebaseUser.uid, selectedFile)
-        } else {
-          throw primaryError
-        }
-      }
+      // Usar o serviço robusto de upload
+      const imageUrl = await uploadAvatarRobust(firebaseUser.uid, selectedFile, {
+        onProgress: (progress) => {
+          setUploadProgress(progress.percentage)
+          console.log(`📊 Progresso: ${progress.percentage.toFixed(1)}%`)
+        },
+        maxRetries: 3,
+        retryDelay: 1000
+      })
 
       console.log("✅ Upload concluído, atualizando perfil com URL:", imageUrl)
 
@@ -84,6 +80,7 @@ export function AvatarUpload() {
       // Limpar estado
       setPreview(null)
       setSelectedFile(null)
+      setUploadProgress(0)
       if (fileInputRef.current) {
         fileInputRef.current.value = ""
       }
@@ -92,6 +89,7 @@ export function AvatarUpload() {
     } catch (error: any) {
       console.error("❌ Erro no upload do avatar:", error)
       setError(error.message || "Erro desconhecido ao fazer upload")
+      setUploadProgress(0)
     } finally {
       setIsLoading(false)
     }
