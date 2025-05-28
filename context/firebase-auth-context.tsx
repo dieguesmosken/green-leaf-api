@@ -10,6 +10,10 @@ import {
   signOutUser, 
   getUserProfile, 
   updateUserProfile,
+  sendVerificationEmail,
+  checkEmailVerification,
+  updateUserPassword,
+  deleteUserAccount,
   UserProfile 
 } from "@/lib/firebase-utils"
 import { toast } from "sonner"
@@ -21,6 +25,10 @@ type AuthContextType = {
   register: (name: string, email: string, password: string) => Promise<void>
   logout: () => Promise<void>
   updateUser: (data: Partial<UserProfile>) => Promise<void>
+  sendEmailVerification: () => Promise<void>
+  checkEmailVerification: () => Promise<boolean>
+  updatePassword: (currentPassword: string, newPassword: string) => Promise<void>
+  deleteAccount: (password: string) => Promise<void>
   isLoading: boolean
   isAuthenticated: boolean
 }
@@ -99,7 +107,6 @@ export function FirebaseAuthProvider({ children }: { children: React.ReactNode }
       throw error
     }
   }
-
   const updateUser = async (data: Partial<UserProfile>) => {
     if (!firebaseUser) throw new Error("Usuário não autenticado")
     
@@ -116,6 +123,59 @@ export function FirebaseAuthProvider({ children }: { children: React.ReactNode }
     }
   }
 
+  const sendEmailVerificationHandler = async () => {
+    try {
+      await sendVerificationEmail()
+      toast.success("Email de verificação enviado!")
+    } catch (error: any) {
+      toast.error(error.message || "Erro ao enviar email de verificação")
+      throw error
+    }
+  }
+
+  const checkEmailVerificationHandler = async (): Promise<boolean> => {
+    try {
+      const isVerified = await checkEmailVerification()
+      if (isVerified && user) {
+        // Atualizar perfil local se email foi verificado
+        await updateUserProfile(firebaseUser!.uid, { emailVerified: true })
+        setUser(prev => prev ? { ...prev, emailVerified: true } : null)
+      }
+      return isVerified
+    } catch (error: any) {
+      console.error("Erro ao verificar email:", error)
+      return false
+    }
+  }
+
+  const updatePasswordHandler = async (currentPassword: string, newPassword: string) => {
+    try {
+      setIsLoading(true)
+      await updateUserPassword(currentPassword, newPassword)
+      toast.success("Senha atualizada com sucesso!")
+    } catch (error: any) {
+      toast.error(error.message || "Erro ao atualizar senha")
+      throw error
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const deleteAccountHandler = async (password: string) => {
+    try {
+      setIsLoading(true)
+      await deleteAccount(password)
+      setUser(null)
+      setFirebaseUser(null)
+      toast.success("Conta deletada com sucesso!")
+      router.push("/")
+    } catch (error: any) {
+      toast.error(error.message || "Erro ao deletar conta")
+      throw error
+    } finally {
+      setIsLoading(false)
+    }
+  }
   const value: AuthContextType = {
     user,
     firebaseUser,
@@ -123,6 +183,10 @@ export function FirebaseAuthProvider({ children }: { children: React.ReactNode }
     register,
     logout,
     updateUser,
+    sendEmailVerification: sendEmailVerificationHandler,
+    checkEmailVerification: checkEmailVerificationHandler,
+    updatePassword: updatePasswordHandler,
+    deleteAccount: deleteAccountHandler,
     isLoading,
     isAuthenticated: !!firebaseUser
   }

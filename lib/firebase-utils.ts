@@ -3,7 +3,11 @@ import {
   createUserWithEmailAndPassword, 
   signOut, 
   sendPasswordResetEmail,
+  sendEmailVerification,
   updateProfile,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
   User as FirebaseUser
 } from "firebase/auth"
 import { 
@@ -11,6 +15,7 @@ import {
   setDoc, 
   getDoc, 
   updateDoc, 
+  deleteDoc,
   serverTimestamp 
 } from "firebase/firestore"
 import { 
@@ -28,8 +33,11 @@ export interface UserProfile {
   image?: string
   createdAt?: any
   updatedAt?: any
-    role?: string
+  role?: string
   isAdmin?: boolean
+  emailVerified?: boolean
+  twoFactorEnabled?: boolean
+  lastLoginAt?: any
   addresses?: Array<{
     id: string
     label: string
@@ -84,6 +92,9 @@ export const signUp = async (name: string, email: string, password: string) => {
     // Update user display name
     await updateProfile(userCredential.user, { displayName: name })
     
+    // Send email verification
+    await sendEmailVerification(userCredential.user)
+    
     // Create user profile in Firestore
     const userProfile: UserProfile = {
       id: userCredential.user.uid,
@@ -93,6 +104,9 @@ export const signUp = async (name: string, email: string, password: string) => {
       updatedAt: serverTimestamp(),
       role: "user",
       isAdmin: false,
+      emailVerified: false,
+      twoFactorEnabled: false,
+      lastLoginAt: serverTimestamp(),
       addresses: []
     }
     
@@ -117,6 +131,70 @@ export const resetPassword = async (email: string) => {
     await sendPasswordResetEmail(auth, email)
   } catch (error: any) {
     throw new Error(error.message || "Erro ao enviar email de recuperação")
+  }
+}
+
+// Email verification functions
+export const sendVerificationEmail = async () => {
+  const user = auth.currentUser
+  if (!user) throw new Error("Usuário não autenticado")
+  
+  try {
+    await sendEmailVerification(user)
+  } catch (error: any) {
+    throw new Error(error.message || "Erro ao enviar email de verificação")
+  }
+}
+
+export const checkEmailVerification = async (): Promise<boolean> => {
+  const user = auth.currentUser
+  if (!user) return false
+  
+  // Refresh user to get latest emailVerified status
+  await user.reload()
+  return user.emailVerified
+}
+
+// Password update functions
+export const updateUserPassword = async (currentPassword: string, newPassword: string) => {
+  const user = auth.currentUser
+  if (!user || !user.email) throw new Error("Usuário não autenticado")
+  
+  try {
+    // Re-authenticate user before changing password
+    const credential = EmailAuthProvider.credential(user.email, currentPassword)
+    await reauthenticateWithCredential(user, credential)
+    
+    // Update password
+    await updatePassword(user, newPassword)
+    
+    // Update user profile in Firestore
+    await updateUserProfile(user.uid, { 
+      updatedAt: serverTimestamp(),
+      lastLoginAt: serverTimestamp()
+    })
+  } catch (error: any) {
+    throw new Error(error.message || "Erro ao atualizar senha")
+  }
+}
+
+// Account management functions
+export const deleteUserAccount = async (password: string) => {
+  const user = auth.currentUser
+  if (!user || !user.email) throw new Error("Usuário não autenticado")
+  
+  try {
+    // Re-authenticate user before deleting account
+    const credential = EmailAuthProvider.credential(user.email, password)
+    await reauthenticateWithCredential(user, credential)
+    
+    // Delete user profile from Firestore
+    await deleteDoc(doc(db, "users", user.uid))
+    
+    // Delete user account
+    await user.delete()
+  } catch (error: any) {
+    throw new Error(error.message || "Erro ao deletar conta")
   }
 }
 
