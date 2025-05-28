@@ -405,6 +405,45 @@ export const ensureAuthStorageSync = async (): Promise<void> => {
         reject(new Error("Usuário não encontrado após múltiplas tentativas"))
       }
     }
+    
+    checkAuth()
+  })
+}
+
+// Helper to get current user
+export const getCurrentUser = (): FirebaseUser | null => {
+  return auth.currentUser
+}
+
+// Helper to check if user is authenticated
+export const isAuthenticated = (): boolean => {
+  return !!auth.currentUser
+}
+
+// Helper to wait for auth state to be loaded
+export const waitForAuth = (): Promise<FirebaseUser | null> => {
+  return new Promise((resolve) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      unsubscribe()
+      resolve(user)
+    })
+  })
+}
+
+// Helper to get current auth token
+export const getCurrentAuthToken = async (): Promise<string | null> => {
+  const user = auth.currentUser
+  if (!user) return null
+  
+  try {
+    const token = await user.getIdToken()
+    return token
+  } catch (error) {
+    console.error("Erro ao obter token:", error)
+    return null
+  }
+}
+
 // Helper to debug auth state
 export const debugAuthState = (): void => {
   const user = auth.currentUser
