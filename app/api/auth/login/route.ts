@@ -1,13 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server"
-import connectToDatabase from "@/lib/mongodb"
-import User from "@/models/User"
-import jwt from "jsonwebtoken"
+import { adminAuth, adminDb } from "@/lib/firebase-admin"
+import { signInWithEmailAndPassword } from "firebase/auth"
+import { auth } from "@/lib/firebase"
 
 export async function POST(request: NextRequest) {
   try {
-    // Connect to the database
-    await connectToDatabase()
-
     // Parse the request body
     const body = await request.json()
     const { email, password } = body
@@ -17,27 +14,40 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Email and password are required" }, { status: 400 })
     }
 
-    // Find user by credentials
-    const user = await User.findByCredentials(email, password)
+    // Authenticate with Firebase
+    const userCredential = await signInWithEmailAndPassword(auth, email, password)
+    const firebaseUser = userCredential.user
 
-    // Generate JWT token
-    const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET!, {
-      expiresIn: "7d",
-    })
+    // Get additional user data from Firestore
+    const userDoc = await adminDb.collection('users').doc(firebaseUser.uid).get()
+    let userData = {
+      uid: firebaseUser.uid,
+      email: firebaseUser.email,
+      name: firebaseUser.displayName,
+      role: 'farmer' // default role
+    }
 
-    // Return user data (without password) and token
-    const userData = user.toObject()
-    delete userData.password
+    if (userDoc.exists) {
+      const firestoreData = userDoc.data()
+      userData = {
+        ...userData,
+        ...firestoreData
+      }
+    }
+
+    // Create custom token for consistent authentication
+    const customToken = await adminAuth.createCustomToken(firebaseUser.uid)
 
     // Set the token as an HTTP-only cookie
     const response = NextResponse.json({
       success: true,
       user: userData,
+      token: customToken
     })
 
     response.cookies.set({
-      name: "token",
-      value: token,
+      name: "auth-token",
+      value: customToken,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
@@ -48,6 +58,17 @@ export async function POST(request: NextRequest) {
     return response
   } catch (error: any) {
     console.error("Login error:", error)
-    return NextResponse.json({ error: "Invalid login credentials" }, { status: 401 })
+    
+    // Return specific Firebase error messages
+    let errorMessage = "Invalid login credentials"
+    if (error.code === 'auth/user-not-found') {
+      errorMessage = "No user found with this email"
+    } else if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+      errorMessage = "Invalid email or password"
+    } else if (error.code === 'auth/too-many-requests') {
+      errorMessage = "Too many failed login attempts. Please try again later."
+    }
+    
+    return NextResponse.json({ error: errorMessage }, { status: 401 })
   }
 }

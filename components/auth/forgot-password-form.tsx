@@ -11,6 +11,8 @@ import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { InfoIcon, CheckCircle2 } from "lucide-react"
+import { sendPasswordResetEmail } from "firebase/auth"
+import { auth } from "@/lib/firebase"
 
 const formSchema = z.object({
   email: z.string().email({ message: "Por favor, insira um endereço de e-mail válido" }),
@@ -28,38 +30,45 @@ export function ForgotPasswordForm() {
       email: "",
     },
   })
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true)
     setError(null)
 
     try {
-      const response = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
+      // Use Firebase Auth directly to send password reset email
+      await sendPasswordResetEmail(auth, values.email, {
+        url: `${window.location.origin}/login`, // Redirect to login after reset
       })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || "Ocorreu um erro ao processar sua solicitação")
-      }
 
       setIsSubmitted(true)
       toast({
-        title: "Solicitação enviada",
+        title: "Email enviado",
         description: "Se seu email estiver registrado, você receberá um link para redefinir sua senha.",
       })
     } catch (error: any) {
-      console.error("Forgot password error:", error)
-      setError(error.message || "Ocorreu um erro ao processar sua solicitação")
-
+      console.error("Password reset error:", error)
+      
+      let errorMessage = "Ocorreu um erro ao processar sua solicitação"
+      
+      // Handle Firebase Auth specific errors
+      if (error.code === 'auth/user-not-found') {
+        // Don't reveal if user exists for security
+        setIsSubmitted(true)
+        toast({
+          title: "Email enviado",
+          description: "Se seu email estiver registrado, você receberá um link para redefinir sua senha.",
+        })
+        return
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = "Email inválido"
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = "Muitas tentativas. Tente novamente mais tarde."
+      }
+      
+      setError(errorMessage)
       toast({
         title: "Erro",
-        description: error.message || "Ocorreu um erro ao processar sua solicitação",
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {

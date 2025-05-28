@@ -1,13 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server"
-import connectToDatabase from "@/lib/mongodb"
-import User from "@/models/User"
-import jwt from "jsonwebtoken"
+import { adminAuth, adminDb } from "@/lib/firebase-admin"
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
+import { auth } from "@/lib/firebase"
 
 export async function POST(request: NextRequest) {
   try {
-    // Connect to the database
-    await connectToDatabase()
-
     // Parse the request body
     const body = await request.json()
     const { name, email, password, role } = body
@@ -17,43 +14,49 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Name, email, and password are required" }, { status: 400 })
     }
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email })
-    if (existingUser) {
-      return NextResponse.json({ error: "User with this email already exists" }, { status: 400 })
-    }
+    // Create user with Firebase Auth
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+    const firebaseUser = userCredential.user
 
-    // Create new user
-    const user = new User({
+    // Update user profile with display name
+    await updateProfile(firebaseUser, {
+      displayName: name
+    })
+
+    // Store additional user data in Firestore
+    const userData = {
+      uid: firebaseUser.uid,
       name,
       email,
-      password,
       role: role || "farmer",
-    })
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
 
-    await user.save()
+    await adminDb.collection('users').doc(firebaseUser.uid).set(userData)
 
-    // Generate JWT token
-    const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET!, {
-      expiresIn: "7d",
-    })
+    // Create custom token for consistent authentication
+    const customToken = await adminAuth.createCustomToken(firebaseUser.uid)
 
-    // Return user data (without password) and token
-    const userData = user.toObject()
-    delete userData.password
-
-    // Set the token as an HTTP-only cookie
+    // Return user data and token
     const response = NextResponse.json(
       {
         success: true,
-        user: userData,
+        user: {
+          uid: firebaseUser.uid,
+          name,
+          email,
+          role: role || "farmer"
+        },
+        token: customToken
       },
-      { status: 201 },
+      { status: 201 }
     )
 
+    // Set the token as an HTTP-only cookie
     response.cookies.set({
-      name: "token",
-      value: token,
+      name: "auth-token",
+      value: customToken,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
@@ -64,6 +67,16 @@ export async function POST(request: NextRequest) {
     return response
   } catch (error: any) {
     console.error("Registration error:", error)
-    return NextResponse.json({ error: error.message || "An error occurred during registration" }, { status: 500 })
+      // Return specific Firebase error messages
+    let errorMessage = "Registration failed"
+    if (error.code === 'auth/email-already-in-use') {
+      errorMessage = "User with this email already exists"
+    } else if (error.code === 'auth/weak-password') {
+      errorMessage = "Password should be at least 6 characters"
+    } else if (error.code === 'auth/invalid-email') {
+      errorMessage = "Invalid email address"
+    }
+    
+    return NextResponse.json({ error: errorMessage }, { status: 400 })
   }
 }

@@ -1,20 +1,18 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app"
 import { getAnalytics } from "firebase/analytics"
-import { getAuth } from "firebase/auth"
-import { getFirestore } from "firebase/firestore"
-import { getStorage } from "firebase/storage"
+import { getAuth, connectAuthEmulator } from "firebase/auth"
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore"
+import { getStorage, connectStorageEmulator } from "firebase/storage"
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v9.0.0 and later, measurementId is optional
+// Your web app's Firebase configuration - Using the correct project configuration
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyAfXOWmdVPKwwEX7hRVkWf67ai4zwhFTZY",
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "greenleafaxis.firebaseapp.com",
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "greenleafaxis",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "greenleafaxis.firebasestorage.app",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "391829351894",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:391829351894:web:fd2515125d005c1ba08877",
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "G-4KY2K3FB4S"
+  apiKey: "AIzaSyDRi7_kFUUzYOvmNT7gm5S8aOUdaIqEvJE",
+  authDomain: "green-leaf-app-a9d22.firebaseapp.com",
+  projectId: "green-leaf-app-a9d22",
+  storageBucket: "green-leaf-app-a9d22.firebasestorage.app",
+  messagingSenderId: "590574633655",
+  appId: "1:590574633655:web:b4fb11c9c9ad41e12ade42"
 }
 
 // Initialize Firebase
