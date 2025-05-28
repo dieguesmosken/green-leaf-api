@@ -12,12 +12,15 @@ import { useAuth } from "@/context/firebase-auth-context"
 import { uploadUserAvatar } from "@/lib/firebase-utils"
 
 export function AvatarUpload() {
-  const { user, firebaseUser, updateUser } = useAuth()
+  const { user, firebaseUser, updateUser, isLoading: authLoading } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [preview, setPreview] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [error, setError] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Verificar se pode fazer upload
+  const canUpload = !authLoading && firebaseUser && user && selectedFile
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -36,9 +39,7 @@ export function AvatarUpload() {
     }
 
     setError("")
-    setSelectedFile(file)
-
-    // Criar preview
+    setSelectedFile(file)    // Criar preview
     const reader = new FileReader()
     reader.onload = (e) => {
       setPreview(e.target?.result as string)
@@ -47,14 +48,21 @@ export function AvatarUpload() {
   }
 
   const handleUpload = async () => {
-    if (!selectedFile || !firebaseUser) return
+    if (!canUpload) {
+      setError("Aguarde o carregamento da autenticação ou selecione um arquivo")
+      return
+    }
 
     try {
       setIsLoading(true)
       setError("")
 
+      console.log("Iniciando upload de avatar para usuário:", firebaseUser.uid)
+
       // Upload para Firebase Storage
       const imageUrl = await uploadUserAvatar(firebaseUser.uid, selectedFile)
+
+      console.log("Upload concluído, atualizando perfil com URL:", imageUrl)
 
       // Atualizar perfil do usuário
       await updateUser({ image: imageUrl })
@@ -65,8 +73,11 @@ export function AvatarUpload() {
       if (fileInputRef.current) {
         fileInputRef.current.value = ""
       }
+
+      console.log("Avatar atualizado com sucesso!")
     } catch (error: any) {
-      setError(error.message)
+      console.error("Erro no upload do avatar:", error)
+      setError(error.message || "Erro desconhecido ao fazer upload")
     } finally {
       setIsLoading(false)
     }
@@ -154,18 +165,21 @@ export function AvatarUpload() {
                 <p className="text-xs text-gray-500">
                   {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                 </p>
-              </div>
-
-              <div className="flex gap-2">
+              </div>              <div className="flex gap-2">
                 <Button
                   onClick={handleUpload}
-                  disabled={isLoading}
+                  disabled={isLoading || !canUpload}
                   className="flex-1"
                 >
                   {isLoading ? (
                     <>
                       <Upload className="mr-2 h-4 w-4 animate-spin" />
                       Enviando...
+                    </>
+                  ) : !canUpload ? (
+                    <>
+                      <Upload className="mr-2 h-4 w-4" />
+                      Aguardando...
                     </>
                   ) : (
                     <>

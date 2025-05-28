@@ -247,14 +247,105 @@ export const deleteUserAccount = async (password: string) => {
   }
 }
 
-// Storage functions
+// Storage functions with enhanced authentication
 export const uploadUserAvatar = async (uid: string, file: File): Promise<string> => {
   try {
-    const storageRef = ref(storage, `avatars/${uid}/${file.name}`)
-    const snapshot = await uploadBytes(storageRef, file)
-    const downloadURL = await getDownloadURL(snapshot.ref)
-    return downloadURL
+    console.log("🔍 Iniciando uploadUserAvatar...")
+    debugAuthState()
+    
+    // Verificação inicial do usuário atual
+    let currentUser = auth.currentUser
+    console.log("👤 Current user inicial:", currentUser ? currentUser.email : "null")
+    
+    // Se não há usuário, aguardar carregamento
+    if (!currentUser) {
+      console.log("⏳ Aguardando autenticação...")
+      currentUser = await waitForAuth()
+    }
+    
+    // Ainda não há usuário autenticado
+    if (!currentUser) {
+      throw new Error("Usuário não autenticado. Por favor, faça login novamente.")
+    }
+    
+    // Verificar se o uid coincide com o usuário atual por segurança
+    if (currentUser.uid !== uid) {
+      throw new Error("Usuário não autorizado para esta operação.")
+    }
+    
+    // Forçar refresh do token para garantir validade
+    console.log("🔄 Refreshing auth token...")
+    try {
+      await currentUser.reload()
+      const token = await currentUser.getIdToken(true) // force refresh
+      console.log("🔑 Token refreshed:", token ? "Presente" : "Ausente")
+      
+      // Aguardar um momento para garantir que o token seja propagado
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
+    } catch (tokenError) {
+      console.error("❌ Erro ao refresh do token:", tokenError)
+      throw new Error("Erro ao validar autenticação. Tente fazer login novamente.")
+    }
+    
+    console.log("📤 Fazendo upload do avatar para usuário:", uid)
+    console.log("📁 Arquivo:", file.name, "Tamanho:", file.size)
+    
+    // Criar referência do storage
+    const timestamp = Date.now()
+    const fileName = `avatar_${timestamp}_${file.name}`
+    const storageRef = ref(storage, `avatars/${uid}/${fileName}`)
+    
+    console.log("📍 Storage path:", `avatars/${uid}/${fileName}`)
+    
+    // Tentar upload com retry em caso de falha de autenticação
+    let uploadAttempts = 0
+    const maxAttempts = 3
+    
+    while (uploadAttempts < maxAttempts) {
+      try {
+        uploadAttempts++
+        console.log(`📤 Tentativa de upload ${uploadAttempts}/${maxAttempts}`)
+        
+        const snapshot = await uploadBytes(storageRef, file)
+        const downloadURL = await getDownloadURL(snapshot.ref)
+        
+        console.log("✅ Upload concluído com sucesso!")
+        console.log("🔗 URL:", downloadURL)
+        return downloadURL
+        
+      } catch (uploadError: any) {
+        console.error(`❌ Erro na tentativa ${uploadAttempts}:`, uploadError.code, uploadError.message)
+        
+        if (uploadError.code === 'storage/unauthenticated' && uploadAttempts < maxAttempts) {
+          console.log("🔄 Tentando refresh de autenticação...")
+          
+          // Aguardar um pouco antes de tentar novamente
+          await new Promise(resolve => setTimeout(resolve, 1000))
+          
+          // Tentar refresh do token novamente
+          try {
+            await currentUser.reload()
+            await currentUser.getIdToken(true)
+            console.log("🔑 Token refreshed para retry")
+          } catch (refreshError) {
+            console.error("❌ Falha no refresh para retry:", refreshError)
+          }
+          
+          continue // Tentar novamente
+        }
+        
+        // Se não é erro de autenticação ou esgotaram tentativas, lançar erro
+        throw uploadError
+      }
+    }
+    
+    throw new Error("Falha no upload após múltiplas tentativas")
+    
   } catch (error: any) {
+    console.error("❌ Erro fatal no upload do avatar:", error)
+    console.error("   Código do erro:", error.code)
+    console.error("   Mensagem:", error.message)
     throw new Error(error.message || "Erro ao fazer upload da imagem")
   }
 }
@@ -280,12 +371,57 @@ export const uploadAnalysisImage = async (uid: string, file: File): Promise<stri
   }
 }
 
-// Helper to get current user
-export const getCurrentUser = (): FirebaseUser | null => {
-  return auth.currentUser
+// Function to ensure auth and storage are synchronized
+export const ensureAuthStorageSync = async (): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const maxAttempts = 10
+    let attempts = 0
+    
+    const checkAuth = () => {
+      attempts++
+      const user = auth.currentUser
+      
+      console.log(`🔄 Verificação de sync ${attempts}/${maxAttempts}:`, user ? user.email : "null")
+      
+      if (user) {
+        // Usuário encontrado, verificar se token é válido
+        user.getIdToken()
+          .then(() => {
+            console.log("✅ Auth e Storage sincronizados")
+            resolve()
+          })
+          .catch((error) => {
+            console.error("❌ Erro ao obter token:", error)
+            if (attempts < maxAttempts) {
+              setTimeout(checkAuth, 500)
+            } else {
+              reject(new Error("Falha na sincronização Auth/Storage"))
+            }
+          })
+      } else if (attempts < maxAttempts) {
+        // Tentar novamente
+        setTimeout(checkAuth, 500)
+      } else {
+        reject(new Error("Usuário não encontrado após múltiplas tentativas"))
+      }
+    }
+// Helper to debug auth state
+export const debugAuthState = (): void => {
+  const user = auth.currentUser
+  console.log("🔍 Debug Auth State:")
+  console.log("  - currentUser:", user ? user.email : "null")
+  console.log("  - uid:", user ? user.uid : "null")
+  console.log("  - emailVerified:", user ? user.emailVerified : "null")
+  console.log("  - isAnonymous:", user ? user.isAnonymous : "null")
 }
 
-// Helper to check if user is authenticated
-export const isAuthenticated = (): boolean => {
-  return !!auth.currentUser
+// Helper to debug Firebase configuration
+export const debugFirebaseConfig = (): void => {
+  console.log("🔧 Firebase Config Debug:")
+  console.log("  - Auth Domain:", process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN)
+  console.log("  - Project ID:", process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID)
+  console.log("  - Storage Bucket:", process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET)
+  console.log("  - App ID:", process.env.NEXT_PUBLIC_FIREBASE_APP_ID)
+  console.log("  - Auth instance:", auth ? "Initialized" : "Not initialized")
+  console.log("  - Storage instance:", storage ? "Initialized" : "Not initialized")
 }

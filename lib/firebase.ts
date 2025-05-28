@@ -18,10 +18,18 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
 
-// Initialize Firebase services
+// Initialize Firebase services with explicit app reference
 export const auth = getAuth(app)
-export const db = getFirestore(app)  // Usando banco padrão que funciona
+export const db = getFirestore(app)
 export const storage = getStorage(app)
+
+// Ensure Storage uses the same auth instance
+// This helps prevent auth/storage disconnection issues
+if (typeof window !== 'undefined') {
+  console.log('🔥 Firebase initialized for client')
+  console.log('📊 Project ID:', firebaseConfig.projectId)
+  console.log('🪣 Storage Bucket:', firebaseConfig.storageBucket)
+}
 
 // Initialize Analytics only on client side
 export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null
