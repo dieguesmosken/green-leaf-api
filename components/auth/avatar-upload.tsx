@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Camera, Upload, X, User } from "lucide-react"
 import { useAuth } from "@/context/firebase-auth-context"
 import { uploadUserAvatar } from "@/lib/firebase-utils"
+import { uploadAvatarAlternative } from "@/lib/upload-alternative"
 
 export function AvatarUpload() {
   const { user, firebaseUser, updateUser, isLoading: authLoading } = useAuth()
@@ -46,7 +47,6 @@ export function AvatarUpload() {
     }
     reader.readAsDataURL(file)
   }
-
   const handleUpload = async () => {
     if (!canUpload) {
       setError("Aguarde o carregamento da autenticação ou selecione um arquivo")
@@ -57,12 +57,26 @@ export function AvatarUpload() {
       setIsLoading(true)
       setError("")
 
-      console.log("Iniciando upload de avatar para usuário:", firebaseUser.uid)
+      console.log("🚀 Iniciando upload de avatar para usuário:", firebaseUser.uid)
 
-      // Upload para Firebase Storage
-      const imageUrl = await uploadUserAvatar(firebaseUser.uid, selectedFile)
+      // Tentar primeiro com a função padrão
+      let imageUrl: string
+      
+      try {
+        console.log("📤 Tentativa 1: Upload padrão")
+        imageUrl = await uploadUserAvatar(firebaseUser.uid, selectedFile)
+      } catch (primaryError: any) {
+        console.log("❌ Upload padrão falhou:", primaryError.message)
+        
+        if (primaryError.message.includes('unauthenticated') || primaryError.code === 'storage/unauthenticated') {
+          console.log("🔄 Tentativa 2: Upload alternativo")
+          imageUrl = await uploadAvatarAlternative(firebaseUser.uid, selectedFile)
+        } else {
+          throw primaryError
+        }
+      }
 
-      console.log("Upload concluído, atualizando perfil com URL:", imageUrl)
+      console.log("✅ Upload concluído, atualizando perfil com URL:", imageUrl)
 
       // Atualizar perfil do usuário
       await updateUser({ image: imageUrl })
@@ -74,9 +88,9 @@ export function AvatarUpload() {
         fileInputRef.current.value = ""
       }
 
-      console.log("Avatar atualizado com sucesso!")
+      console.log("🎉 Avatar atualizado com sucesso!")
     } catch (error: any) {
-      console.error("Erro no upload do avatar:", error)
+      console.error("❌ Erro no upload do avatar:", error)
       setError(error.message || "Erro desconhecido ao fazer upload")
     } finally {
       setIsLoading(false)

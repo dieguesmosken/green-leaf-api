@@ -253,39 +253,21 @@ export const uploadUserAvatar = async (uid: string, file: File): Promise<string>
     console.log("🔍 Iniciando uploadUserAvatar...")
     debugAuthState()
     
-    // Verificação inicial do usuário atual
-    let currentUser = auth.currentUser
-    console.log("👤 Current user inicial:", currentUser ? currentUser.email : "null")
+    // Garantir sincronização entre Auth e Storage
+    console.log("🔄 Garantindo sincronização Auth/Storage...")
+    await ensureAuthStorageSync()
     
-    // Se não há usuário, aguardar carregamento
-    if (!currentUser) {
-      console.log("⏳ Aguardando autenticação...")
-      currentUser = await waitForAuth()
-    }
+    // Verificação do usuário atual após sincronização
+    const currentUser = auth.currentUser
+    console.log("👤 Current user após sync:", currentUser ? currentUser.email : "null")
     
-    // Ainda não há usuário autenticado
     if (!currentUser) {
-      throw new Error("Usuário não autenticado. Por favor, faça login novamente.")
+      throw new Error("Usuário não autenticado após sincronização. Faça login novamente.")
     }
     
     // Verificar se o uid coincide com o usuário atual por segurança
     if (currentUser.uid !== uid) {
       throw new Error("Usuário não autorizado para esta operação.")
-    }
-    
-    // Forçar refresh do token para garantir validade
-    console.log("🔄 Refreshing auth token...")
-    try {
-      await currentUser.reload()
-      const token = await currentUser.getIdToken(true) // force refresh
-      console.log("🔑 Token refreshed:", token ? "Presente" : "Ausente")
-      
-      // Aguardar um momento para garantir que o token seja propagado
-      await new Promise(resolve => setTimeout(resolve, 100))
-      
-    } catch (tokenError) {
-      console.error("❌ Erro ao refresh do token:", tokenError)
-      throw new Error("Erro ao validar autenticação. Tente fazer login novamente.")
     }
     
     console.log("📤 Fazendo upload do avatar para usuário:", uid)
@@ -298,54 +280,24 @@ export const uploadUserAvatar = async (uid: string, file: File): Promise<string>
     
     console.log("📍 Storage path:", `avatars/${uid}/${fileName}`)
     
-    // Tentar upload com retry em caso de falha de autenticação
-    let uploadAttempts = 0
-    const maxAttempts = 3
+    // Upload direto após sincronização
+    const snapshot = await uploadBytes(storageRef, file)
+    const downloadURL = await getDownloadURL(snapshot.ref)
     
-    while (uploadAttempts < maxAttempts) {
-      try {
-        uploadAttempts++
-        console.log(`📤 Tentativa de upload ${uploadAttempts}/${maxAttempts}`)
-        
-        const snapshot = await uploadBytes(storageRef, file)
-        const downloadURL = await getDownloadURL(snapshot.ref)
-        
-        console.log("✅ Upload concluído com sucesso!")
-        console.log("🔗 URL:", downloadURL)
-        return downloadURL
-        
-      } catch (uploadError: any) {
-        console.error(`❌ Erro na tentativa ${uploadAttempts}:`, uploadError.code, uploadError.message)
-        
-        if (uploadError.code === 'storage/unauthenticated' && uploadAttempts < maxAttempts) {
-          console.log("🔄 Tentando refresh de autenticação...")
-          
-          // Aguardar um pouco antes de tentar novamente
-          await new Promise(resolve => setTimeout(resolve, 1000))
-          
-          // Tentar refresh do token novamente
-          try {
-            await currentUser.reload()
-            await currentUser.getIdToken(true)
-            console.log("🔑 Token refreshed para retry")
-          } catch (refreshError) {
-            console.error("❌ Falha no refresh para retry:", refreshError)
-          }
-          
-          continue // Tentar novamente
-        }
-        
-        // Se não é erro de autenticação ou esgotaram tentativas, lançar erro
-        throw uploadError
-      }
-    }
-    
-    throw new Error("Falha no upload após múltiplas tentativas")
+    console.log("✅ Upload concluído com sucesso!")
+    console.log("🔗 URL:", downloadURL)
+    return downloadURL
     
   } catch (error: any) {
     console.error("❌ Erro fatal no upload do avatar:", error)
     console.error("   Código do erro:", error.code)
     console.error("   Mensagem:", error.message)
+    
+    // Se é erro de autenticação, dar instruções específicas
+    if (error.code === 'storage/unauthenticated') {
+      throw new Error("Erro de autenticação do Storage. Tente fazer logout e login novamente.")
+    }
+    
     throw new Error(error.message || "Erro ao fazer upload da imagem")
   }
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useAuth } from "@/context/firebase-auth-context"
-import { uploadUserAvatar, waitForAuth, debugAuthState, getCurrentAuthToken, debugFirebaseConfig } from "@/lib/firebase-utils"
+import { uploadUserAvatar, waitForAuth, debugAuthState, getCurrentAuthToken, debugFirebaseConfig, ensureAuthStorageSync } from "@/lib/firebase-utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
