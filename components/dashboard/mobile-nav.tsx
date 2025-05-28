@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { BarChart3, FileUp, Home, Leaf, MapPin, Menu, Settings, Users } from "lucide-react"
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/context/firebase-auth-context"
 
 const navItems = [
   {

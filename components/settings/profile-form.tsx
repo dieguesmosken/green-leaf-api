@@ -8,7 +8,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/components/ui/use-toast"
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/context/firebase-auth-context"
 
 const profileFormSchema = z.object({
   name: z.string().min(2, {

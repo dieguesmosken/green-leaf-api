@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/use-toast"
 
 type User = {
+  endereco: never[]
   id: string
   name: string
   email: string

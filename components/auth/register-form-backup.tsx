@@ -45,12 +45,9 @@ export function RegisterForm() {
       role: "farmer",
     },
   })
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true)
-    setError(null)
-
-    try {
+    setError(null)    try {
       await register(values.name, values.email, values.password)
 
       toast({
@@ -60,12 +57,12 @@ export function RegisterForm() {
 
       router.push("/dashboard")
     } catch (error: any) {
-      console.error("Register error:", error)
-      setError(error.message || "Falha no registro. Tente novamente.")
+      console.error("Registration error:", error)
+      setError(error.message || "Falha no registro. Por favor, tente novamente.")
 
       toast({
         title: "Falha no registro",
-        description: error.message || "Tente novamente.",
+        description: error.message || "Houve um erro ao criar sua conta. Por favor, tente novamente.",
         variant: "destructive",
       })
     } finally {
@@ -77,10 +74,8 @@ export function RegisterForm() {
     <>
       <Alert className="mb-4">
         <InfoIcon className="h-4 w-4" />
-        <AlertTitle>Criar nova conta</AlertTitle>
-        <AlertDescription>
-          <p className="mt-1">Preencha os campos abaixo para criar sua conta no Green Leaf.</p>
-        </AlertDescription>
+        <AlertTitle>Informação</AlertTitle>
+        <AlertDescription>Preencha o formulário abaixo para criar uma nova conta.</AlertDescription>
       </Alert>
 
       {error && (
@@ -97,9 +92,9 @@ export function RegisterForm() {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nome completo</FormLabel>
+                <FormLabel>Nome</FormLabel>
                 <FormControl>
-                  <Input placeholder="Seu nome completo" {...field} />
+                  <Input placeholder="Seu nome" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -125,7 +120,7 @@ export function RegisterForm() {
               <FormItem>
                 <FormLabel>Senha</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="Sua senha" {...field} />
+                  <Input type="password" placeholder="Crie uma senha" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -136,7 +131,7 @@ export function RegisterForm() {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirmar senha</FormLabel>
+                <FormLabel>Confirmar Senha</FormLabel>
                 <FormControl>
                   <Input type="password" placeholder="Confirme sua senha" {...field} />
                 </FormControl>
@@ -149,11 +144,11 @@ export function RegisterForm() {
             name="role"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Tipo de usuário</FormLabel>
+                <FormLabel>Função</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione o tipo de usuário" />
+                      <SelectValue placeholder="Selecione sua função" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -173,7 +168,7 @@ export function RegisterForm() {
                 Criando conta...
               </>
             ) : (
-              "Criar conta"
+              "Registrar"
             )}
           </Button>
         </form>

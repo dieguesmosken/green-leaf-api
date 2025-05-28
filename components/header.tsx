@@ -3,7 +3,7 @@
 import { Leaf } from "lucide-react"
 import Link from "next/link"
 import { UserNav } from "@/components/dashboard/user-nav"
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/context/firebase-auth-context"
 
 export function Header() {
   const { user } = useAuth();

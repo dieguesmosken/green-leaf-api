@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { BarChart3, FileUp, Home, MapPin, Settings, Users, Mail } from "lucide-react"
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/context/firebase-auth-context"
 
 // Atualize os itens de navegação
 const navItems = [

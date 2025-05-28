@@ -6,6 +6,7 @@ export interface IUser {
   email: string
   password: string
   role: "admin" | "researcher" | "farmer"
+  endereco?: string
   location?: {
     type: string
     coordinates: number[]
@@ -52,6 +53,11 @@ const userSchema = new mongoose.Schema<IUserDocument>({
       type: [Number],
       default: [0, 0],
     },
+    endereco: {
+      type: String,
+      required: false,
+    },
+      
   },
   createdAt: {
     type: Date,

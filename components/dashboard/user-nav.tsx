@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/context/firebase-auth-context"
 import { useRouter } from "next/navigation"
 import { LogOut, Settings, User } from "lucide-react"
 

@@ -1,0 +1,12 @@
+{"users": [
+{
+  "localId": "jUyTUMIkhkTRGijjZtYC34A66Ur1",
+  "email": "dmosken2015@gmail.com",
+  "emailVerified": false,
+  "passwordHash": "ieabc7DK+idjgTlYTsrMdWnAj414ru+vqSqHk4yB1k+qkEmudYxhX1t8FcvS2QrWI7jR6xMNUyFJottJtDTldQ==",
+  "salt": "5jyizsm8b0vkXA==",
+  "displayName": "Matheus Mosken Diegues",
+  "lastSignedInAt": "1748392937173",
+  "createdAt": "1748392937173",
+  "providerUserInfo": []
+}]}

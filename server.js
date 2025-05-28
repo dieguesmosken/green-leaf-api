@@ -49,6 +49,11 @@ app.use("/api/images", imageRoutes)
 app.use("/api/analyses", analysisRoutes)
 app.use("/api/heatmaps", heatmapRoutes)
 
+// Health check route
+app.get("/", (req, res) => {
+  res.send("Green Leaf API is running")
+})
+
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGODB_URI)
@@ -57,8 +62,3 @@ mongoose
     app.listen(PORT, () => console.log(`Server running on port: ${PORT}`))
   })
   .catch((error) => console.log(`${error} did not connect`))
-
-// Health check route
-app.get("/", (req, res) => {
-  res.send("Green Leaf API is running")
-})

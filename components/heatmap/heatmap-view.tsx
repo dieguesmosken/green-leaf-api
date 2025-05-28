@@ -12,17 +12,66 @@ interface HeatmapViewProps {
   severityFilter: string[]
 }
 
+interface FeatureProperties {
+  date: string
+  intensity: number
+  severity?: string
+}
+
+interface GeoJSONFeature {
+  type: "Feature"
+  geometry: {
+    type: "Point"
+    coordinates: [number, number]
+  }
+  properties: FeatureProperties
+}
+
 export function HeatmapView({ selectedHeatmap, dateRange, severityFilter }: HeatmapViewProps) {
   const mapContainer = useRef<HTMLDivElement>(null)
   const map = useRef<mapboxgl.Map | null>(null)
-  const [allData, setAllData] = useState<any[]>([])
+  const [allData, setAllData] = useState<GeoJSONFeature[]>([])
+
+  // Cleanup function para remover o mapa quando o componente for desmontado
+  useEffect(() => {
+    return () => {
+      if (map.current) {
+        map.current.remove()
+        map.current = null
+      }
+    }
+  }, [])
 
   // Carregar JSON externo
   useEffect(() => {
     fetch("/pontos-infeccao.json")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`)
+        }
+        return res.json()
+      })
       .then((geojson) => {
-        setAllData(geojson.features)
+        if (geojson?.features && Array.isArray(geojson.features)) {
+          // Validar e normalizar dados
+          const validFeatures = geojson.features.filter((feature: any) => {
+            return (
+              feature?.geometry?.type === "Point" &&
+              feature?.geometry?.coordinates &&
+              feature?.properties?.date &&
+              feature?.properties?.intensity !== undefined
+            )
+          }).map((feature: any) => {
+            // Adicionar propriedade severity calculada se não existir
+            if (!feature.properties.severity) {
+              feature.properties.severity = getSeverityFromIntensity(feature.properties.intensity)
+            }
+            return feature
+          })
+          setAllData(validFeatures)
+        } else {
+          console.error("Dados GeoJSON inválidos")
+        }
       })
       .catch((err) => console.error("Erro ao carregar dados:", err))
   }, [])
@@ -52,7 +101,7 @@ export function HeatmapView({ selectedHeatmap, dateRange, severityFilter }: Heat
           type: "geojson",
           data: {
             type: "FeatureCollection",
-            features: filterData(allData),
+            features: filterData(allData, dateRange, severityFilter),
           },
         })
 
@@ -94,8 +143,7 @@ export function HeatmapView({ selectedHeatmap, dateRange, severityFilter }: Heat
               0.5, "#db7b2b",
               0.75, "#cc3232",
               1, "#80024e",
-            ],
-            "circle-stroke-width": 1,
+            ],            "circle-stroke-width": 1,
             "circle-stroke-color": "white",
             "circle-opacity": ["interpolate", ["linear"], ["zoom"], 7, 0, 8, 1],
           },
@@ -104,19 +152,26 @@ export function HeatmapView({ selectedHeatmap, dateRange, severityFilter }: Heat
         map.current?.on("click", "infection-point", (e) => {
           if (!e.features || e.features.length === 0) return
           const feature = e.features[0]
-          const coordinates = feature.geometry.coordinates.slice()
+          let coordinates: [number, number] | undefined
+          if (feature.geometry.type === "Point" && Array.isArray(feature.geometry.coordinates)) {
+            coordinates = (feature.geometry.coordinates as [number, number]).slice() as [number, number]
+          } else {
+            // fallback or skip popup if geometry is not a Point
+            return
+          }
           const intensity = feature.properties?.intensity || 0
-          const severity = getSeverityLabel(intensity)
-          const date = new Date(feature.properties?.date).toLocaleDateString()
+          const severity = feature.properties?.severity || getSeverityFromIntensity(intensity)
+          const dateStr = feature.properties?.date
+          const date = dateStr ? new Date(dateStr).toLocaleDateString() : "Data não disponível"
 
           new mapboxgl.Popup()
             .setLngLat(coordinates as [number, number])
             .setHTML(
               `<div class="p-2">
-                <h3 class="font-bold">Infection Data</h3>
-                <p>Intensity: ${(intensity * 100).toFixed(1)}%</p>
-                <p>Severity: ${severity}</p>
-                <p>Date: ${date}</p>
+                <h3 class="font-bold">Dados de Infecção</h3>
+                <p>Intensidade: ${(intensity * 100).toFixed(1)}%</p>
+                <p>Severidade: ${severity}</p>
+                <p>Data: ${date}</p>
               </div>`
             )
             .addTo(map.current as mapboxgl.Map)
@@ -130,16 +185,14 @@ export function HeatmapView({ selectedHeatmap, dateRange, severityFilter }: Heat
           if (map.current) map.current.getCanvas().style.cursor = ""
         })
       })
-    }
-
-    if (map.current && map.current.isStyleLoaded() && map.current.getSource("infection-data")) {
-      const filtered = filterData(allData)
+    }    if (map.current && map.current.isStyleLoaded() && map.current.getSource("infection-data")) {
+      const filtered = filterData(allData, dateRange, severityFilter)
       ;(map.current.getSource("infection-data") as mapboxgl.GeoJSONSource).setData({
         type: "FeatureCollection",
         features: filtered,
       })
     }
-  }, [allData, selectedHeatmap, dateRange, severityFilter])
+  }, [allData, dateRange, severityFilter])
 
   return <div ref={mapContainer} className="h-full w-full" />
 }
@@ -156,14 +209,26 @@ function getSeverityLabel(intensity: number): string {
   return getSeverityFromIntensity(intensity).charAt(0).toUpperCase() + getSeverityFromIntensity(intensity).slice(1)
 }
 
-function filterData(data: any[]) {
+function filterData(
+  data: GeoJSONFeature[],
+  dateRange: { from: Date; to: Date },
+  severityFilter: string[]
+): GeoJSONFeature[] {
   return data.filter((feature) => {
-    const date = new Date(feature.properties.date)
-    const severity = feature.properties.severity
+    if (!feature?.properties) return false
+    
+    const dateStr = feature.properties.date
+    if (!dateStr) return false
+    
+    const date = new Date(dateStr)
+    if (isNaN(date.getTime())) return false
+    
+    const severity = feature.properties.severity || getSeverityFromIntensity(feature.properties.intensity || 0)
+    
     return (
-      date >= new Date(window.heatmapDateRange?.from ?? 0) &&
-      date <= new Date(window.heatmapDateRange?.to ?? Date.now()) &&
-      window.heatmapSeverityFilter?.includes(severity)
+      date >= dateRange.from &&
+      date <= dateRange.to &&
+      severityFilter.includes(severity)
     )
   })
 }
