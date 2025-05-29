@@ -45,9 +45,10 @@ export function RegisterForm() {
       role: "farmer",
     },
   })
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true)
-    setError(null)    try {
+  async function onSubmit(values: z.infer<typeof formSchema>) {    setIsLoading(true)
+    setError(null)
+    
+    try {
       await register(values.name, values.email, values.password)
 
       toast({
